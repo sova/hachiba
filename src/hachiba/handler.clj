@@ -31,6 +31,22 @@
 (defn terms-for-page [] )
 
 
+
+(defn add-to-index [post thread_id]
+  )
+
+(defn new-thread [boardname content]
+  ;generate a post id
+  ;move into atom for @posts
+  ;generate a thread id
+  ;save the post id associated with the thread id to the @threads atom
+  ;save the thread id to the @page-threads atom
+  )
+
+
+
+
+
 (defn submit-post [crown]
   (println "crown: " crown))
 
@@ -49,10 +65,11 @@
 (def cm { :component/menu (html [:div#menu.main
                                  [:div.menulinks
                                  [:div#hachiba_title "蜂場"]
+                                 [:div.link [:a {:href "/"} "top page"]]
                                  ;[:div (str "logged in: " (:user @page))]
                                  ;[:div.link [:a {:href "/user"} "points"]]
                                  [:div.link [:a {:href "/about"} "about"]]
-                                 [:div.link [:a {:href "/"} "top page"]]
+
                                  [:div.link [:a {:href "/fresh"} "fresh"]]
                                  [:div.link [:a {:href "/submit"} "submit"]]
                                  ;[:div.link [:a {:href "/favorites"} "favorites"]]
@@ -60,7 +77,7 @@
                                  [:div.link [:a {:href "/index"} "complete index"]]]])
 
           :component/search (html [:div#searchbar.main
-                                    [:span "practicalhuman.org/"
+                                    [:span [:a {:href "/"} "practicalhuman.org/"]
                                      (form-to
                                        [:post "/boardnav"]
 
@@ -106,6 +123,19 @@
          (for [fold coll]
            [:a.fold {:href (str "/" fold)} (str "/" fold)])]]))
 
+
+(defn draw-threads [])
+(defn get-threads [term]
+  ;return a vector of threads that live on this page
+  )
+
+
+
+
+
+
+
+
 (def folds ["nature" "pomp" "waves" "wigwam"])
 
 (defroutes hachiba-routes
@@ -117,9 +147,9 @@
 
   (POST "/boardnav" [params :as params]
     (let [desired-url (:form-params params)
-          sanitized (clojure.string/replace desired-url #"[^a-zA-Z0-9]" "")]
+          sanitized (clojure.string/replace desired-url #"[^a-zA-Z0-9\s]" "")]
 
-      (println sanitized)
+      ;(println sanitized)
       {:status 302
        :headers {"Location" sanitized}
        :body ""}))
@@ -137,26 +167,38 @@
                       (html [:div#topterm (str "now browsing /"   term)])
                       (:component/header cm)
                       (:component/menu cm)
-                      (:component/body cm)
+                      (draw-threads (get-threads term))
                       (comment-input term)
-                      (html-footer folds)))
+                      ;(html-footer folds)
+                      ))
+
+
   (GET "/:term/" [term]
               (concat (:component/search cm)
                       (html [:div#topterm (str "now browsing /" term "/")])
                       (:component/header cm)
                       (:component/menu cm)
-                      (:component/body cm)
+                      (draw-threads (get-threads term))
                       (comment-input term)
-                      (html-footer folds)))
+                      ;(html-footer folds)
+                      ))
 
 
 
   (POST "/post" [params :as params]
-        ;validate post params
+    (let [fp (:form-params params)
+          capval (get fp "capval")
+          boardname (get fp "boardname")
+          content (get fp "post_content")
+          captcha (get fp "captcha")
+          sanitized (clojure.string/replace content #"[^a-zA-Z0-9\s.()]" "")]
 
-        ;save post to index
+      (if (= capval captcha)
+        (do
+          (println "/" boardname)
+          (println content)
+          (new-thread boardname content)))))
 
-        (str params))
   (route/not-found "Not Found"))
 
 

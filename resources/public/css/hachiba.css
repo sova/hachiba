@@ -22,10 +22,13 @@
   font-size: 40px;
 }
 
+form { display: inline; }
+
 #searchbox {
   font-size: 22px;
   width: 330px;
   font-family: 'Source Sans Pro', sans-serif;
+  display: inline;
 }
 
 #menu.main {
