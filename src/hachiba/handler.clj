@@ -3,7 +3,9 @@
             [compojure.route :as route]
             [hiccup.core :refer :all]
             [hiccup.form :refer :all]
-            [ring.middleware.defaults :refer [wrap-defaults api-defaults]]))
+            [ring.middleware.defaults :refer [wrap-defaults api-defaults]]
+            [ring.middleware.resource :refer [wrap-resource]]
+            [ring.middleware.content-type :refer [wrap-content-type]]))
 
 ;atoms
 (def page (atom {:user "vaso"}))
@@ -66,15 +68,17 @@
                                     [:div "/wigwam"]
                                     [:div "/jokes"]]])
           :component/input (let [crown (int (Math/floor (* 1000 (rand))))]
-                             (html (form-to [:post "/post"]
-                                  [:textarea#post_content]
-                                  [:input#captcha {:placeholder crown}]
-                                   (submit-button {:class "btn"
-                                                   :id "post_submit"
-                                                   :onSubmit (submit-post crown)} "Post"))))
+                             (html (form-to
+                                     [:post "/post"]
+                                     (hidden-field {:value crown} "capval")
+                                     (text-area {:placeholder "post content"} "post_content")
+                                     (text-field {:placeholder crown} "captcha")
+                                     (submit-button {:class "btn"
+                                                     :id "post_submit"
+                                                     :onSubmit (submit-post crown)} "Post"))))
           })
 
-(defroutes app-routes
+(defroutes hachiba-routes
   (GET "/" [] (concat (:component/search cm)
                       (:component/header cm)
                       (:component/menu cm)
@@ -82,12 +86,14 @@
                       (:component/input cm)
                       (:component/footer cm)))
   (GET "/hello" [] (str "Hello person! Welcome to Hachiba!"))
-  (GET "/:x" [x] (str x))
   (POST "/post" [params :as params] (str params))
   (route/not-found "Not Found"))
 
-(def app
-  (wrap-defaults app-routes api-defaults))
+;(def app
+;  (wrap-defaults app-routes api-defaults))
 
+(def app
+  (-> (wrap-defaults hachiba-routes api-defaults)
+      (wrap-resource "public")))
 
 
