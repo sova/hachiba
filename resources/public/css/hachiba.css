@@ -40,6 +40,18 @@
 }
 
 
+#post_content {
+float: left;
+clear: left;}
+
+#captcha {
+float:left;
+clear:left;}
+
+#post_submit {
+  float: left;
+  clear: none;
+}
 
 #footing {
 width: 100%;
