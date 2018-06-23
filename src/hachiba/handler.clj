@@ -37,16 +37,17 @@
 
 
 (def cm { :component/menu (html [:div#menu.main
-                                 [:div.hidden
-                                 [:div "はちば 蜂場"]
-                                 [:div (str "logged in as: " (:user @page))]
-                                 [:div "points"]
-                                 [:div "top page"]
-                                 [:div "fresh"]
-                                 [:div "submit"]
-                                 [:div "favorites"]
-                                 [:div "logout"]
-                                 [:div "complete index"]]])
+                                 [:div.menulinks
+                                 [:div#hachiba_title "蜂場"]
+                                 ;[:div (str "logged in: " (:user @page))]
+                                 ;[:div.link [:a {:href "/user"} "points"]]
+                                 [:div.link [:a {:href "/about"} "about"]]
+                                 [:div.link [:a {:href "/"} "top page"]]
+                                 [:div.link [:a {:href "/fresh"} "fresh"]]
+                                 [:div.link [:a {:href "/submit"} "submit"]]
+                                 ;[:div.link [:a {:href "/favorites"} "favorites"]]
+                                 ;[:div.link [:a {:href "/logout"} "logout"]]
+                                 [:div.link [:a {:href "/index"} "complete index"]]]])
 
           :component/search (html [:div#searchbar.main
                                     [:span "practicalhuman.org/" [:input#searchbox {:placeholder "enter a boardname or create one"}]]])
@@ -57,32 +58,43 @@
                               [:link {:type "text/css", :href "/css/hachiba.css", :rel "stylesheet"}]
                               [:br][:br]
                               [:p
-                              [:div {:class "HelloBox"} "Hello!"]
+                              [:div {:class "latest"} "Latest Posts"]
                               [:ul (for [x coll] [:li x])]]]]))
 
           :component/footer (html [:div#footing "top folds"
                                    [:div#topfolds.main
-                                    [:div "/nature"]
-                                    [:div "/wigwam"]
-                                    [:div "/jokes"]]])
-          :component/input (let [crown (int (Math/floor (* 1000 (rand))))]
+                                    [:a.fold {:href "/nature"} "/nature"]
+                                    [:a.fold {:href "/wigwam"} "/wigwam"]
+                                    [:a.fold {:href "/jokes"}  "/jokes"]]])
+          })
+
+
+(defn comment-input [term]
+  (let [crown (int (Math/floor (* 1000 (rand))))]
                              (html (form-to
                                      [:post "/post"]
                                      (hidden-field {:value crown} "capval")
+                                     (hidden-field {:value term} "boardname")
                                      (text-area {:placeholder "post content"} "post_content")
                                      (text-field {:placeholder crown} "captcha")
                                      (submit-button {:class "btn"
                                                      :id "post_submit"
-                                                     :onSubmit (submit-post crown)} "Post"))))
-          })
+                                                     :onSubmit (submit-post crown)} "Post")))))
 
 (defroutes hachiba-routes
   (GET "/" [] (concat (:component/search cm)
                       (:component/header cm)
                       (:component/menu cm)
                       (:component/body cm)
-                      (:component/input cm)
                       (:component/footer cm)))
+
+  (GET "/user" [params :as params] (str "user!" params))
+  (GET "/about" [params :as params] (str "about!" params))
+  (GET "/fresh" [params :as params] (str "fresh!" params))
+  (GET "/submit" [params :as params] (str "submit!" params))
+  (GET "/favorites" [params :as params] (str "favorites!" params))
+  (GET "/logout" [params :as params] (str "logout!" params))
+  (GET "/index" [params :as params] (str "complete index!" params))
 
   (GET "/:term" [term]
               (concat (:component/search cm)
@@ -90,16 +102,16 @@
                       (:component/header cm)
                       (:component/menu cm)
                       (:component/body cm)
-                      (:component/input cm)
-                      (:component/footer cm)))
+                      (comment-input term)))
   (GET "/:term/" [term]
               (concat (:component/search cm)
                       (html [:div#topterm (str "now browsing /" term "/")])
                       (:component/header cm)
                       (:component/menu cm)
                       (:component/body cm)
-                      (:component/input cm)
-                      (:component/footer cm)))
+                      (comment-input term)))
+
+
 
   (POST "/post" [params :as params]
         ;validate post params

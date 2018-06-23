@@ -1,3 +1,6 @@
+/*Created by Vaso
+  v@nonforum.com*/
+
 @import url('https://fonts.googleapis.com/css?family=Encode+Sans+Condensed:300|Source+Sans+Pro:200');
 
 
@@ -30,10 +33,9 @@
   font-size: 14px;
   width: 120px;
   display: block;
-  position: absolute;
-  top: 0;
-  right: 0;
-  background-color: hsla(170, 50%, 50%, .35);
+  position: fixed;
+  top: 5px;
+  right: 5px;
 }
 
 
@@ -45,14 +47,32 @@
   background-color: hsla(170, 50%, 50%, .3);
 }
 
-#menu.top {
+#menu {
   position: absolute;
   right: 0;
   top: 0;
-  border: 0px;
-  background-color: hsla(170, 50%, 50%, .35);
+
   display: inline-block;
   font-size: 24px;
+}
+
+#hachiba_title {
+  font-size: 46px;
+  margin-top: 35px;
+  padding-bottom: 42px;
+  padding-left: 8px;
+}
+
+.menulinks {
+
+    background-color: hsla(170, 50%, 50%, .35);
+
+  padding-left: 5px;
+
+
+  border: 1px solid black;
+  border-radius: 5px;
+  padding-bottom: 4px;
 }
 
 #main_contain {
@@ -62,8 +82,14 @@
 
 
 #post_content {
-float: left;
-clear: left;}
+  float: left;
+  clear: left;
+  min-width: 250px;
+  min-height: 30px;
+  width: 550px;
+  height: 120px;
+  font-size: 18px;
+}
 
 #captcha {
 float:left;
@@ -89,6 +115,10 @@ left: 0;
 
   background-color: hsla(170, 50%, 50%, .35);
   height: 100px;
+}
+
+.fold {
+  display: list-item;
 }
 
 
