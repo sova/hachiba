@@ -34,7 +34,17 @@
 (defn submit-post [crown]
   (println "crown: " crown))
 
+(defn submit-boardnav []
+  (clojure.string/replace "A(B%$c32d" #"[^a-zA-Z]" "")
+  (println "boardnav submit event"))
 
+;        蜂場
+;      hachiba
+;place/field of bees
+
+;       実用人
+;     jitsuyou hito
+;practical person
 
 (def cm { :component/menu (html [:div#menu.main
                                  [:div.menulinks
@@ -50,7 +60,14 @@
                                  [:div.link [:a {:href "/index"} "complete index"]]]])
 
           :component/search (html [:div#searchbar.main
-                                    [:span "practicalhuman.org/" [:input#searchbox {:placeholder "enter a boardname or create one"}]]])
+                                    [:span "practicalhuman.org/"
+                                     (form-to
+                                       [:post "/boardnav"]
+
+                                       (text-field {:placeholder "enter a boardname or create one" :maxlength 37 :id "searchbox"} "::")
+                                       (submit-button {:class "btn"
+                                                      :id "boardnav_submit"
+                                                      :onSubmit (submit-boardnav)} "go"))]])
 
           :component/body (html (let [coll [1 2 3 4 5 6 7]]
                             [:body
@@ -81,12 +98,31 @@
                                                      :id "post_submit"
                                                      :onSubmit (submit-post crown)} "Post")))))
 
+(defn html-footer
+  "Generates a footer element given a collection of folds (board names)"
+  [coll]
+  (html [:div#footing "top folds"
+         [:div#topfolds.main
+         (for [fold coll]
+           [:a.fold {:href (str "/" fold)} (str "/" fold)])]]))
+
+(def folds ["nature" "pomp" "waves" "wigwam"])
+
 (defroutes hachiba-routes
   (GET "/" [] (concat (:component/search cm)
                       (:component/header cm)
                       (:component/menu cm)
                       (:component/body cm)
-                      (:component/footer cm)))
+                      (html-footer folds)))
+
+  (POST "/boardnav" [params :as params]
+    (let [desired-url (:form-params params)
+          sanitized (clojure.string/replace desired-url #"[^a-zA-Z0-9]" "")]
+
+      (println sanitized)
+      {:status 302
+       :headers {"Location" sanitized}
+       :body ""}))
 
   (GET "/user" [params :as params] (str "user!" params))
   (GET "/about" [params :as params] (str "about!" params))
@@ -102,14 +138,16 @@
                       (:component/header cm)
                       (:component/menu cm)
                       (:component/body cm)
-                      (comment-input term)))
+                      (comment-input term)
+                      (html-footer folds)))
   (GET "/:term/" [term]
               (concat (:component/search cm)
                       (html [:div#topterm (str "now browsing /" term "/")])
                       (:component/header cm)
                       (:component/menu cm)
                       (:component/body cm)
-                      (comment-input term)))
+                      (comment-input term)
+                      (html-footer folds)))
 
 
 
