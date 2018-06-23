@@ -36,11 +36,9 @@
 
 
 
-(def cm { :component/header (html [:div#heading.top
-                                   [:span "hachiba 蜂場 はちば"]
-                                   [:div#menu.top "Hachiba"]])
-          :component/menu (html [:div#menu.main
+(def cm { :component/menu (html [:div#menu.main
                                  [:div.hidden
+                                 [:div "はちば 蜂場"]
                                  [:div (str "logged in as: " (:user @page))]
                                  [:div "points"]
                                  [:div "top page"]
@@ -51,16 +49,16 @@
                                  [:div "complete index"]]])
 
           :component/search (html [:div#searchbar.main
-                                   [:div "practicalhuman.org/"
-                                    [:input#searchbox]]])
+                                    [:span "practicalhuman.org/" [:input#searchbox {:placeholder "enter a boardname or create one"}]]])
 
           :component/body (html (let [coll [1 2 3 4 5 6 7]]
                             [:body
-                            [:link {:type "text/css", :href "css/hachiba.css", :rel "stylesheet"}]
-                            [:br][:br]
-                            [:p
-                            [:div {:class "HelloBox"} "Hello!"]
-                            [:ul (for [x coll] [:li x])]]]))
+                             [:div#main_contain
+                              [:link {:type "text/css", :href "/css/hachiba.css", :rel "stylesheet"}]
+                              [:br][:br]
+                              [:p
+                              [:div {:class "HelloBox"} "Hello!"]
+                              [:ul (for [x coll] [:li x])]]]]))
 
           :component/footer (html [:div#footing "top folds"
                                    [:div#topfolds.main
@@ -85,12 +83,32 @@
                       (:component/body cm)
                       (:component/input cm)
                       (:component/footer cm)))
-  (GET "/hello" [] (str "Hello person! Welcome to Hachiba!"))
-  (POST "/post" [params :as params] (str params))
+
+  (GET "/:term" [term]
+              (concat (:component/search cm)
+                      (html [:div#topterm (str "now browsing /"   term)])
+                      (:component/header cm)
+                      (:component/menu cm)
+                      (:component/body cm)
+                      (:component/input cm)
+                      (:component/footer cm)))
+  (GET "/:term/" [term]
+              (concat (:component/search cm)
+                      (html [:div#topterm (str "now browsing /" term "/")])
+                      (:component/header cm)
+                      (:component/menu cm)
+                      (:component/body cm)
+                      (:component/input cm)
+                      (:component/footer cm)))
+
+  (POST "/post" [params :as params]
+        ;validate post params
+
+        ;save post to index
+
+        (str params))
   (route/not-found "Not Found"))
 
-;(def app
-;  (wrap-defaults app-routes api-defaults))
 
 (def app
   (-> (wrap-defaults hachiba-routes api-defaults)
