@@ -9,14 +9,14 @@
             [clj-time.core :as t]))
 
 ;atoms
-(def page (atom {:user "vaso"}))
-(def page-names (atom {:pagename "page_id"}))
+;(def page (atom {:user "vaso"}))
+;(def page-names (atom {:pagename "page_id"}))
 (def page-threads (atom [{:pagename "hax"
                           :threads [10029]}
                          {:pagename "top"
                           :threads [10031 10033]}])) ; ordered based on thread stats
-(def page-terms (atom {:pagename "pagename"
-                       :terms ["terms"]}))
+;(def page-terms (atom {:pagename "pagename"
+;                       :terms ["terms"]}))
 (def threads (atom [{:thread_id "10029"
                      :posts [17778 17780]}
                     {:thread_id 10031
@@ -64,8 +64,10 @@
 ;(find-index "hax")
 
 (defn update-page-threads [pagename new-thread-id]
-  (let [idx (find-index pagename)]
-    (assoc @page-threads idx :threads new-thread-id)))
+  (let [idx (find-index pagename)
+        page-thread-map (get @page-threads idx)]
+    (assoc @page-threads idx {:pagename pagename
+                              :threads (conj (:threads page-thread-map) new-thread-id)})))
 
 
 (defn uuid [] (subs (.toString (java.util.UUID/randomUUID)) 0 8))
@@ -121,19 +123,16 @@
       (swap! posts conj {:thread-id thread-id
                          :post-id post-id
                          :content content
-                         :timestamp (t/now)})
-
-      (println "board index for " boardname " " (.indexOf @page-threads {:pagename boardname}))
+                         :timestamp (quot (System/currentTimeMillis) 1000)})
 
       ;add to threads
-      ;(swap! threads  ()
-
-             ; update-in [:thread-id thread-id] assoc :post-id post-id)
+      (reset! page-threads (update-page-threads boardname thread-id))
 
       ;add to pages
       ;(swap! page-threads update-in [:pagename boardname] assoc :thread-id thread-id)
 
       (println @posts)
+      (println @page-threads)
         ;add to posts
         ;add to threads
       )
@@ -333,7 +332,7 @@
           captcha (get fp "captcha")
           sanitized (clojure.string/replace content #"[^a-zA-Z0-9\s.()]" "")
           thread-id (get fp "thread_id")
-          timestamp (t/now)]
+          timestamp (quot (System/currentTimeMillis) 1000)]
 
       (if (= capval captcha)
         (do
