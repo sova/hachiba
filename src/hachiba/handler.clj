@@ -17,7 +17,9 @@
 (def page-terms (atom {:pagename "pagename"
                        :terms ["terms"]}))
 (def threads (atom [{:thread_id 10029
-                     :posts [17778 17779 17780]}]))
+                     :posts [17778 17780]}
+                    {:thread_id 10031
+                     :posts [17779]}]))
 
 (def posts (atom [{:post_id 17778
                    :contents "content"
@@ -67,13 +69,18 @@
         threads (:threads (first thread-map))]
     threads))
 
+(defn get-post-by-id [pid]
+  (let [post-map (filter (fn [{:keys [post_id]}] (= post_id pid)) @posts)]
+    post-map))
+
 
 
 (println (get-posts-by-thread 10029))
 
 (println (get-thread-by-post 17779))
 
-(println (get-threads-by-page "top"))
+(println "# " (get-threads-by-page "top"))
+
 
 (defn add-to-index [post thread_id]
   )
@@ -105,7 +112,8 @@
 ;     jitsuyou hito
 ;practical person
 
-(def cm { :component/menu (html [:div#menu.main
+(def cm { :component/menu (html [:link {:type "text/css", :href "/css/hachiba.css", :rel "stylesheet"}]
+                                [:div#menu.main
                                  [:div.menulinks
                                  [:div#hachiba_title "蜂場"]
                                  [:div.link [:a {:href "/" :class "sblink"} "top page"]]
@@ -132,7 +140,6 @@
           :component/body (html (let [coll [1 2 3 4 5 6 7]]
                             [:body
                              [:div#main_contain
-                              [:link {:type "text/css", :href "/css/hachiba.css", :rel "stylesheet"}]
                               [:br][:br]
                               [:p
                               [:div {:class "latest"} "Latest Posts"]
@@ -167,26 +174,21 @@
            [:a.fold {:href (str "/" fold)} (str "/" fold)])]]))
 
 
-(defn draw-threads
+(defn draw-threads-for-page
   "Returns HTML rendering of threads coll"
-  [threads]
+  [term]
 
   (html
-  [:div.threads
-    (for [thread threads]
-      [:div.thread
-      (let [posts (get-posts-by-thread thread)]
-        (for [post posts]
-          [:div.post
-           [:div.post_content (:content post)]
-           [:div.post_timestamp (:timestamp post)]]))])]))
-
-(defn get-threads [term]
-  ;return a vector of threads that live on this page
-  )
-
-
-
+    [:div.threads
+    (let [threads (get-threads-by-page term)]
+       (for [thread threads]
+         [:div.thread
+         (let [post-ids (get-posts-by-thread thread)]
+           (for [pid post-ids]
+             (let [post-map (first (get-post-by-id pid))]
+               [:div.post
+                 [:div.post_content (:contents post-map)]
+                 [:div.post_timestamp (:timestamp post-map)]])))]))]))
 
 
 
@@ -223,7 +225,7 @@
                       (html [:div#topterm (str "now browsing /"   term)])
                       (:component/header cm)
                       (:component/menu cm)
-                      (draw-threads (get-threads term))
+                      (draw-threads-for-page term)
                       (comment-input term)
                       ;(html-footer folds)
                       ))
@@ -234,7 +236,7 @@
                       (html [:div#topterm (str "now browsing /" term "/")])
                       (:component/header cm)
                       (:component/menu cm)
-                      (draw-threads (get-threads term))
+                      (draw-threads-for-page term)
                       (comment-input term)
                       ;(html-footer folds)
                       ))
