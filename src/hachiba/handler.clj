@@ -311,7 +311,7 @@
                       (:component/header cm)
                       (:component/menu cm)
                       (:component/body cm)
-                      (html-footer (distinct @last-modified))))
+                      (html-footer (take 100 (distinct @last-modified)))))
 
   (POST "/" [params :as params]
     (let [desired-url (:form-params params)
