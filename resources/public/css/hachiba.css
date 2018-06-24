@@ -31,9 +31,10 @@
   position: relative;
   min-height: 50px;
   width: auto;
-  background-color: #efefef;
-  border: 1px solid green;
-  margin-top: 4px;
+  background-color: hsla(170, 50%, 80%, .2);
+  border: 1px solid hsla(170, 50%, 20%, .5);
+  padding: 2px;
+  margin-top: 10px;
 
 }
 

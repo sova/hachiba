@@ -69,7 +69,7 @@
 
 
 ;(def vints (atom 12345678))
-(defn uuid [] (subs (clojure.string/replace (.toString (java.util.UUID/randomUUID)) #"[^0-9]" "") 0 9))
+(defn uuid [] (subs (clojure.string/replace (.toString (java.util.UUID/randomUUID)) #"[^0-57-9A-Za-z]" "") 0 9))
 ;(defn uuid []
 ;  (int (swap! vints inc)))
 
@@ -137,7 +137,8 @@
 
       (println @posts)
       (println @threads)
-      (println @page-threads))
+      (println @page-threads)
+      thread-id)
     ;else, not nil thread-id
     (let [post-id (uuid)]
       (do
@@ -150,14 +151,16 @@
         (reset! threads (update-threads thread-id post-id))
 
         ;update page-threads
-        (reset! page-threads (update-page-threads boardname thread-id))))))
+        (reset! page-threads (update-page-threads boardname thread-id))
+        thread-id))))
 
 
 
 
 
 (defn submit-post [crown]
-  (println "crown: " crown))
+  ;(println "crown: " crown)
+  )
 
 (defn submit-boardnav []
   (clojure.string/replace "A(B%$c32d" #"[^a-zA-Z]" "")
@@ -372,10 +375,10 @@
           ;(println thread-id)
           ;(println content)
          ; (println thread-id " : is the thread-id")
-          (new-post boardname thread-id content)
-          {:status 302
-           :headers {"Location" boardname}
-           :body ""}))))
+          (let [tid-after-post (new-post boardname thread-id content)]
+            {:status 302
+             :headers {"Location" (str boardname "/" tid-after-post)}
+             :body ""})))))
 
   (route/not-found "Not Found"))
 
