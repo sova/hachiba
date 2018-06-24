@@ -93,11 +93,11 @@
 
 
 
-;(def vints (atom 1))
-(defn uuid [] (subs (.toString (java.util.UUID/randomUUID)) 0 8))
-;(defn uuid []
-;  (swap! vints inc)
-;  @vints)
+(def vints (atom 12345678))
+;(defn uuid [] (subs (.toString (java.util.UUID/randomUUID)) 0 8))
+(defn uuid []
+  (swap! vints inc)
+  @vints)
 
 
 (defn page-for-post
@@ -132,22 +132,23 @@
 
 
 
-(println (get-posts-by-thread 10029))
+(println "# " (get-posts-by-thread "10029"))
 
-(println (get-thread-by-post 17779))
+(println "## " (get-thread-by-post 17779))
 
-(println "# " (get-threads-by-page "top"))
+(println "### " (get-threads-by-page "top"))
 
 
-(defn add-to-index [post thread_id])
-
-(defn new-post [boardname thread-id content]
+(defn new-post
+  "1. Generate new ID for post (and if not set, thread).
+   2. Update posts-atom, threads-atom, page-terms-atom"
+  [boardname thread-id content]
   (if (nil? thread-id)
     (let [thread-id (uuid)
           post-id (uuid)]
       ;add to posts
-      (swap! posts conj {:thread-id thread-id
-                         :post-id post-id
+      (swap! posts conj {:thread-id (str thread-id)
+                         :post-id (str post-id)
                          :content content
                          :timestamp (quot (System/currentTimeMillis) 1000)})
 
@@ -167,7 +168,7 @@
       (do
         ;add to posts
         (swap! posts conj {:thread-id thread-id
-                           :post-id post-id
+                           :post-id (str post-id)
                            :content content
                            :timestamp (quot (System/currentTimeMillis) 1000)})
         ;update threads
@@ -175,12 +176,6 @@
 
         ;update page-threads
         (reset! page-threads (update-page-threads boardname thread-id))))))
-
-  ;generate a post id
-  ;move into atom for @posts
-  ;generate a thread id
-  ;save the post id associated with the thread id to the @threads atom
-  ;save the thread id to the @page-threads atom
 
 
 
