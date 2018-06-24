@@ -188,7 +188,7 @@
              (let [post-map (first (get-post-by-id pid))]
                [:div.post
                  [:div.post_content (:contents post-map)]
-                 [:div.post_timestamp (:timestamp post-map)]])))]))]))
+                 [:div.post_timestamp "posted at " (:timestamp post-map)]])))]))]))
 
 
 

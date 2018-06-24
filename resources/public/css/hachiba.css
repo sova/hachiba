@@ -9,6 +9,25 @@
 }
 
 
+.post {
+  background-color: hsla(170, 50%, 50%, .5);
+  min-width: 200px;
+  width: 500px;
+  min-height:40px;
+  display: block;
+  float: left;
+  clear: left;
+
+  border: 1px solid #ccc;
+  margin-top: 4px;
+}
+
+.threads {
+  background-color: hsla(170, 50%, 50%, .3);
+}
+.thread {}
+
+
 a:visited, a {
   color: hsla(170, 50%, 30%, 1);
   text-decoration: none;
@@ -115,7 +134,6 @@ form { display: inline; }
   min-width: 250px;
   min-height: 30px;
   width: 550px;
-  height: 120px;
   font-size: 18px;
 }
 
