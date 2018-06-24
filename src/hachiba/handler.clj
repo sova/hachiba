@@ -9,47 +9,18 @@
             [clj-time.core :as t]))
 
 ;atoms
-;(def page (atom {:user "vaso"}))
-;(def page-names (atom {:pagename "page_id"}))
-(def page-threads (atom [{:pagename "hax"
-                          :threads [10029]}
-                         {:pagename "top"
-                          :threads [10031 10033]}])) ; ordered based on thread stats
-;(def page-terms (atom {:pagename "pagename"
-;                       :terms ["terms"]}))
-(def threads (atom [{:thread-id "10029"
-                     :posts [17778 17780]}
-                    {:thread-id 10031
-                     :posts [17779]}
-                    {:thread-id 10033
-                     :posts [18881 18882 18883]}]))
+;;(def page (atom {:user "vaso"}))
+;;(def page-names (atom {:pagename "page_id"}))
+;; ordered based on thread stats
+;;(def page-terms (atom {:pagename "pagename"
+;;                       :terms ["terms"]}))
 
-(def posts (atom [{:post-id 17778
-                   :contents "I'll start this thread!"
-                   :timestamp 1018
-                   :thread-id 10029}
-                  {:post-id 17779
-                   :contents "Well, this is a neat experiment..."
-                   :timestamp 1018
-                   :thread-id 10029}
-                  {:post-id 17780
-                   :contents "Let's try it out!"
-                   :timestamp 1018
-                   :thread-id 10029}
-                  {:post-id 18881
-                   :contents "Magic!"
-                   :timestamp 1022
-                   :thread-id 10029}
-                  {:post-id 18882
-                   :contents "You best believe it."
-                   :timestamp 1028
-                   :thread-id 10029}
-                  {:post-id 18883
-                   :contents "Harpoons and Cartoons!"
-                   :timestamp 1033
-                   :thread-id 10029}]))
+;(def latest-threads (atom {:fresh-threads ["thread-id"]}))
 
-(def latest-threads (atom {:fresh-threads ["thread-id"]}))
+
+(def page-threads (atom []))
+(def threads (atom []))
+(def posts (atom []))
 
 
 ;fxns
@@ -64,10 +35,14 @@
 ;(find-index "hax")
 
 (defn update-page-threads [pagename new-thread-id]
-  (let [idx (find-index pagename)
-        page-thread-map (get @page-threads idx)]
+  (let [idx (find-index pagename)]
+    (if (= nil idx)
+      (conj @page-threads {:pagename pagename
+                           :threads [new-thread-id]})
+      ;else
+      (let [page-thread-map (get @page-threads idx)]
     (assoc @page-threads idx {:pagename pagename
-                              :threads (vec (distinct (conj (:threads page-thread-map) new-thread-id)))})))
+                              :threads (vec (distinct (conj (:threads page-thread-map) new-thread-id)))})))))
 
 
 
@@ -291,7 +266,7 @@
                (println "^^^ " pid)
                (let [post-map (first (get-post-by-id pid))]
                  [:div.post
-                   [:div.post_content (:contents post-map)]
+                   [:div.post_content (:content post-map)]
                    [:div.post_timestamp "posted at " (:timestamp post-map)]]))))]])))]))
 
 
@@ -312,7 +287,7 @@
                  (println "^xxx^ " (first (get-post-by-id pid)))
 
                [:div.post
-                 [:div.post_content (:contents post-map)]
+                 [:div.post_content (:content post-map)]
                  [:div.post_timestamp "posted at " (:timestamp post-map)]]))))]))
 
 

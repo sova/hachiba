@@ -1,0 +1,38 @@
+(def posts (atom [{:post-id 17778
+                   :content "I'll start this thread!"
+                   :timestamp 1018
+                   :thread-id 10029}
+                  {:post-id 17779
+                   :content "Well, this is a neat experiment..."
+                   :timestamp 1018
+                   :thread-id 10029}
+                  {:post-id 17780
+                   :content "Let's try it out!"
+                   :timestamp 1018
+                   :thread-id 10029}
+                  {:post-id 18881
+                   :content "Magic!"
+                   :timestamp 1022
+                   :thread-id 10029}
+                  {:post-id 18882
+                   :content "You best believe it."
+                   :timestamp 1028
+                   :thread-id 10029}
+                  {:post-id 18883
+                   :content "Harpoons and Cartoons!"
+                   :timestamp 1033
+                   :thread-id 10029}]))
+
+
+(def threads (atom [{:thread-id "10029"
+                     :posts [17778 17780]}
+                    {:thread-id 10031
+                     :posts [17779]}
+                    {:thread-id 10033
+                     :posts [18881 18882 18883]}]))
+
+
+(def page-threads (atom [{:pagename "hax"
+                          :threads [10029]}
+                         {:pagename "top"
+                          :threads [10031 10033]}]))

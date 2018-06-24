@@ -1,4 +1,4 @@
-(defproject com.nonforum/hachiba "0.0.0"
+(defproject com.nonforum/hachiba "0.0.1"
   :description "Hachiba: Online Posting Board"
   :url "https://nonforum.com/hachiba"
   :min-lein-version "2.0.0"
