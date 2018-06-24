@@ -27,6 +27,18 @@
 (def most-posts (atom []))
 
 
+
+(def gtag "<head><!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src='https://www.googletagmanager.com/gtag/js?id=UA-119547458-2'></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-119547458-2');
+</script></head>")
+
+
 ;fxns
 (defn find-index [term]
   (reduce-kv (fn [_ idx m]
@@ -304,7 +316,8 @@
 (def folds ["nature" "pomp" "waves" "wigwam"])
 
 (defroutes hachiba-routes
-  (GET "/" [] (concat (:component/search cm)
+  (GET "/" [] (concat gtag
+                      (:component/search cm)
                       (:component/header cm)
                       (:component/menu cm)
                       (:component/latest cm)
@@ -319,24 +332,28 @@
 
   (GET "/user" [params :as params] (str "user!" params))
   (GET "/about" [params :as params]
-       (concat (:component/search cm)
+       (concat        gtag
+                      (:component/search cm)
                       (html [:div#topterm (str "about practicalhuman.org/")])
                       (:component/header cm)
                       (html [:div#about "This is a messageboard experiment by Valiant V."])
                       (:component/menu cm)))
+
   (GET "/fresh" [params :as params] (str "fresh!" params))
   (GET "/favorites" [params :as params] (str "favorites!" params))
   (GET "/logout" [params :as params] (str "logout!" params))
   (GET "/index" [params :as params]
     (let [pagenames (map :pagename @page-threads)]
-              (concat (:component/search cm)
+              (concat gtag
+                      (:component/search cm)
                       (:component/header cm)
                       (:component/menu cm)
                       (:component/complete cm)
                       (html-recents pagenames))))
 
   (GET "/:term" [term]
-              (concat (:component/search cm)
+              (concat gtag
+                      (:component/search cm)
                       (html [:div#topterm (str "now browsing /"   term)])
                       (:component/header cm)
 
@@ -349,7 +366,8 @@
 
 
   (GET "/:term/" [term]
-              (concat (:component/search cm)
+              (concat gtag
+                      (:component/search cm)
                       (html [:div#topterm (str "now browsing /" term "/")])
                       (:component/header cm)
 
@@ -360,7 +378,8 @@
                       ))
 
   (GET "/:term/:tid" [term tid]
-              (concat (:component/search cm)
+              (concat gtag
+                      (:component/search cm)
                       (html [:div#topterm "now browsing /" [:a {:href (str "/" term)} term] (str "/" tid)])
                       (:component/header cm)
 
