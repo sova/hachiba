@@ -22,6 +22,10 @@
 (def threads (atom []))
 (def posts (atom []))
 
+(def last-modified (atom []))
+(def most-threads (atom []))
+(def most-posts (atom []))
+
 
 ;fxns
 (defn find-index [term]
@@ -107,11 +111,11 @@
 
 
 
-(println "# " (get-posts-by-thread "10029"))
+;(println "# " (get-posts-by-thread "10029"))
 
-(println "## " (get-thread-by-post 17779))
+;(println "## " (get-thread-by-post 17779))
 
-(println "### " (get-threads-by-page "top"))
+;(println "### " (get-threads-by-page "top"))
 
 
 (defn new-post
@@ -138,6 +142,8 @@
       (println @posts)
       (println @threads)
       (println @page-threads)
+      (println @last-modified)
+      (swap! last-modified conj boardname)
       thread-id)
     ;else, not nil thread-id
     (let [post-id (uuid)]
@@ -152,6 +158,8 @@
 
         ;update page-threads
         (reset! page-threads (update-page-threads boardname thread-id))
+
+        (swap! last-modified conj boardname)
         thread-id))))
 
 
@@ -164,7 +172,8 @@
 
 (defn submit-boardnav []
   (clojure.string/replace "A(B%$c32d" #"[^a-zA-Z]" "")
-  (println "boardnav submit event"))
+  ;(println "boardnav submit event")
+  )
 
 ;        蜂場
 ;      hachiba
@@ -243,7 +252,7 @@
 (defn html-footer
   "Generates a footer element given a collection of folds (board names)"
   [coll]
-  (html [:div#footing "top folds"
+  (html [:div#footing "recent posts"
          [:div#topfolds.main
          (for [fold coll]
            [:a.fold {:href (str "/" fold)} (str "/" fold)])]]))
@@ -302,7 +311,7 @@
                       (:component/header cm)
                       (:component/menu cm)
                       (:component/body cm)
-                      (html-footer folds)))
+                      (html-footer (distinct @last-modified))))
 
   (POST "/" [params :as params]
     (let [desired-url (:form-params params)
