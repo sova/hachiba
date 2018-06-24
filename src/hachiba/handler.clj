@@ -53,6 +53,11 @@
 
 
 ;fxns
+(defn has-value [key value]
+  "Returns a predicate that tests whether a map contains a specific value"
+  (fn [m]
+    (= value (m key))))
+
 (defn uuid [] (subs (.toString (java.util.UUID/randomUUID)) 0 8))
 
 
@@ -97,13 +102,39 @@
 (defn add-to-index [post thread_id]
   )
 
-(defn new-thread [boardname content]
+(defn new-post [boardname thread-id content]
+  (if (nil? thread-id)
+    (let [thread-id (uuid)
+          post-id (uuid)]
+      ;add to posts
+      (swap! posts conj {:thread-id thread-id
+                         :post-id post-id
+                         :content content
+                         :timestamp (t/now)})
+
+      (println "board index for " boardname " " (.indexOf @page-threads {:pagename boardname}))
+
+      ;add to threads
+      ;(swap! threads  ()
+
+             ; update-in [:thread-id thread-id] assoc :post-id post-id)
+
+      ;add to pages
+      ;(swap! page-threads update-in [:pagename boardname] assoc :thread-id thread-id)
+
+      (println @posts)
+        ;add to posts
+        ;add to threads
+      )
+    ;else
+    ;add to posts
+    ))
+
   ;generate a post id
   ;move into atom for @posts
   ;generate a thread id
   ;save the post id associated with the thread id to the @threads atom
   ;save the thread id to the @page-threads atom
-  )
 
 
 
@@ -210,7 +241,7 @@
   "Returns HTML rendering of all the posts in a given thread"
   [tid]
   (html
-    [:div.thread {:thread_id tid}
+    [:div.thread {:id tid}
      (println "get posts by thread tid" (get-posts-by-thread tid))
          (let [post-ids (get-posts-by-thread tid)]
            (for [pid post-ids]
@@ -290,14 +321,18 @@
           content (get fp "post_content")
           captcha (get fp "captcha")
           sanitized (clojure.string/replace content #"[^a-zA-Z0-9\s.()]" "")
-          thread_id (get fp "thread_id")
+          thread-id (get fp "thread_id")
           timestamp (t/now)]
 
       (if (= capval captcha)
         (do
           (println "/" boardname)
           (println content)
-          (new-thread boardname content)))))
+         ; (println thread-id " : is the thread-id")
+          (new-post boardname thread-id content)
+          {:status 302
+           :headers {"Location" boardname}
+           :body ""}))))
 
   (route/not-found "Not Found"))
 

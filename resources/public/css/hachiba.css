@@ -37,8 +37,8 @@
 
 }
 
-.thread < a {
-  color: #000;
+.thread > a, .thread > a:visited {
+  color: hsla(170, 50%, 5%, 1);
 }
 
 .post {
