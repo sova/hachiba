@@ -8,6 +8,30 @@
   font-family: 'Source Sans Pro', sans-serif;
 }
 
+
+a:visited, a {
+  color: hsla(170, 50%, 30%, 1);
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+#sblink {
+  text-decoration: none;
+}
+#sblink:hover {
+  text-decoration: underline;
+}
+
+.sblink {
+  text-decoration: none;
+}
+
+.sblink:hover {
+  text-decoration: underline;
+}
+
 #topterm {
   float: left;
   clear: left;
@@ -64,6 +88,7 @@ form { display: inline; }
   margin-top: 35px;
   padding-bottom: 42px;
   padding-left: 8px;
+  color: hsla(170, 50%, 20%, 1);
 }
 
 .menulinks {
@@ -73,7 +98,7 @@ form { display: inline; }
   padding-left: 5px;
 
 
-  border: 1px solid black;
+  border: 1px solid hsla(170, 50%, 30%, 1);
   border-radius: 5px;
   padding-bottom: 4px;
 }

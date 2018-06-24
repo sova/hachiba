@@ -10,14 +10,34 @@
 ;atoms
 (def page (atom {:user "vaso"}))
 (def page-names (atom {:pagename "page_id"}))
-(def page-threads (atom {:pagename ["thread_ids"]})) ; ordered based on thread stats
-(def page-terms (atom {:pagename ["terms"]}))
-(def threads (atom {:thread_id ["post_ids"]}))
-(def posts (atom {:post_id "post_id"
+(def page-threads (atom [{:pagename "hax"
+                          :threads [10029]}
+                         {:pagename "top"
+                          :threads [10031]}])) ; ordered based on thread stats
+(def page-terms (atom {:pagename "pagename"
+                       :terms ["terms"]}))
+(def threads (atom [{:thread_id 10029
+                     :posts [17778 17779 17780]}]))
+
+(def posts (atom [{:post_id 17778
                    :contents "content"
                    :timestamp 1018
                    :num_posts 1
-                   :last-touched 1018}))
+                   :last-touched 1018
+                   :thread_id 10029}
+                  {:post_id 17779
+                   :contents "content"
+                   :timestamp 1018
+                   :num_posts 1
+                   :last-touched 1018
+                   :thread_id 10029}
+                  {:post_id 17780
+                   :contents "content"
+                   :timestamp 1018
+                   :num_posts 1
+                   :last-touched 1018
+                   :thread_id 10029}]))
+
 (def latest-threads (atom {:fresh-threads ["thread_id"]}))
 
 
@@ -30,7 +50,30 @@
 (defn post-for-query [] )
 (defn terms-for-page [] )
 
+(defn get-posts-by-thread [tid]
+  (let [posts-map (filter (fn [{:keys [thread_id]}] (= tid thread_id)) @threads)
+        posts (:posts (first posts-map))]
 
+    posts))
+
+
+(defn get-thread-by-post [pid]
+  (let [thread-map (filter (fn [{:keys [post_id]}] (= post_id pid)) @posts)
+        thread (:thread_id (first thread-map))]
+    thread))
+
+(defn get-threads-by-page [term]
+  (let [thread-map (filter (fn [{:keys [pagename]}] (= pagename term)) @page-threads)
+        threads (:threads (first thread-map))]
+    threads))
+
+
+
+(println (get-posts-by-thread 10029))
+
+(println (get-thread-by-post 17779))
+
+(println (get-threads-by-page "top"))
 
 (defn add-to-index [post thread_id]
   )
@@ -65,19 +108,19 @@
 (def cm { :component/menu (html [:div#menu.main
                                  [:div.menulinks
                                  [:div#hachiba_title "蜂場"]
-                                 [:div.link [:a {:href "/"} "top page"]]
+                                 [:div.link [:a {:href "/" :class "sblink"} "top page"]]
                                  ;[:div (str "logged in: " (:user @page))]
-                                 ;[:div.link [:a {:href "/user"} "points"]]
-                                 [:div.link [:a {:href "/about"} "about"]]
+                                 ;[:div.link [:a {:href "/user" :class "sblink"} "points"]]
+                                 [:div.link [:a {:href "/about" :class "sblink"} "about"]]
 
-                                 [:div.link [:a {:href "/fresh"} "fresh"]]
-                                 [:div.link [:a {:href "/submit"} "submit"]]
-                                 ;[:div.link [:a {:href "/favorites"} "favorites"]]
-                                 ;[:div.link [:a {:href "/logout"} "logout"]]
-                                 [:div.link [:a {:href "/index"} "complete index"]]]])
+                                 [:div.link [:a {:href "/fresh" :class "sblink"} "fresh"]]
+                                 [:div.link [:a {:href "/submit" :class "sblink"} "submit"]]
+                                 ;[:div.link [:a {:href "/favorites" :class "sblink"} "favorites"]]
+                                 ;[:div.link [:a {:href "/logout" :class "sblink"} "logout"]]
+                                 [:div.link [:a {:href "/index" :class "sblink"} "complete index"]]]])
 
           :component/search (html [:div#searchbar.main
-                                    [:span [:a {:href "/"} "practicalhuman.org/"]
+                                    [:span [:a {:href "/" :id "sblink"} "practicalhuman.org/"]
                                      (form-to
                                        [:post "/boardnav"]
 
@@ -124,7 +167,20 @@
            [:a.fold {:href (str "/" fold)} (str "/" fold)])]]))
 
 
-(defn draw-threads [])
+(defn draw-threads
+  "Returns HTML rendering of threads coll"
+  [threads]
+
+  (html
+  [:div.threads
+    (for [thread threads]
+      [:div.thread
+      (let [posts (get-posts-by-thread thread)]
+        (for [post posts]
+          [:div.post
+           [:div.post_content (:content post)]
+           [:div.post_timestamp (:timestamp post)]]))])]))
+
 (defn get-threads [term]
   ;return a vector of threads that live on this page
   )
