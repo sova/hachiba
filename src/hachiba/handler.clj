@@ -208,13 +208,11 @@
                                                       :id "boardnav_submit"
                                                       :onSubmit (submit-boardnav)} "go"))]])
 
-          :component/body (html (let [coll [1 2 3 4 5 6 7]]
+          :component/body (html (let [coll (take 100 (distinct @last-modified))]
                             [:body
                              [:div#main_contain
-                              [:br][:br]
-                              [:p
-                              [:div {:class "latest"} "Latest Posts"]
-                              [:ul (for [x coll] [:li x])]]]]))
+                              [:div {:class "latest"} "Latest Activity"]
+                              [:ul (for [x coll] [:li [:a {:href (str "/" x)} x]])]]]))
 
           :component/footer (html [:div#footing "top folds"
                                    [:div#topfolds.main
@@ -249,10 +247,10 @@
                                                      :id "post_submit"
                                                      :onSubmit (submit-post crown)} "Post")))))
 
-(defn html-footer
+(defn html-recents
   "Generates a footer element given a collection of folds (board names)"
   [coll]
-  (html [:div#footing "recent posts"
+  (html [:div#marking "recent posts"
          [:div#topfolds.main
          (for [fold coll]
            [:a.fold {:href (str "/" fold)} (str "/" fold)])]]))
@@ -311,7 +309,7 @@
                       (:component/header cm)
                       (:component/menu cm)
                       (:component/body cm)
-                      (html-footer (take 100 (distinct @last-modified)))))
+                      (html-recents (take 100 (distinct @last-modified)))))
 
   (POST "/" [params :as params]
     (let [desired-url (:form-params params)
@@ -332,9 +330,10 @@
               (concat (:component/search cm)
                       (html [:div#topterm (str "now browsing /"   term)])
                       (:component/header cm)
-                      (:component/menu cm)
+
                       (draw-threads-for-page term)
                       (comment-input term)
+                      (:component/menu cm)
 
                       ;(html-footer folds)
                       ))
@@ -344,9 +343,10 @@
               (concat (:component/search cm)
                       (html [:div#topterm (str "now browsing /" term "/")])
                       (:component/header cm)
-                      (:component/menu cm)
+
                       (draw-threads-for-page term)
                       (comment-input term)
+                      (:component/menu cm)
                       ;(html-footer folds)
                       ))
 
@@ -354,11 +354,12 @@
               (concat (:component/search cm)
                       (html [:div#topterm "now browsing /" [:a {:href (str "/" term)} term] (str "/" tid)])
                       (:component/header cm)
-                      (:component/menu cm)
+
                       ;(println "gpbt" (get-posts-by-thread tid))
                       (draw-posts-for-thread tid)
                       ;(println "tid" tid)
                       (comment-input-with-tid term tid)
+                      (:component/menu cm)
                       ;(html-footer folds)
                       ))
 
