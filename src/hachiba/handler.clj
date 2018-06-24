@@ -171,7 +171,7 @@
                                      [:post "/post"]
                                      (hidden-field {:value crown} "capval")
                                      (hidden-field {:value term} "boardname")
-                                     (text-area {:placeholder "post content"} "post_content")
+                                     (text-area {:placeholder (str "post to " term)} "post_content")
                                      (text-field {:placeholder crown} "captcha")
                                      (submit-button {:class "btn"
                                                      :id "post_submit"
@@ -195,12 +195,16 @@
     (let [threads (get-threads-by-page term)]
        (for [thread threads]
          [:div.thread {:thread_id thread}
-         (let [post-ids (get-posts-by-thread thread)]
-           (for [pid post-ids]
-             (let [post-map (first (get-post-by-id pid))]
-               [:div.post
-                 [:div.post_content (:contents post-map)]
-                 [:div.post_timestamp "posted at " (:timestamp post-map)]])))]))]))
+          [:a {:href (str "/" term "/" thread)}
+           (let [post-ids (get-posts-by-thread thread)]
+             (for [pid post-ids]
+               (let [post-map (first (get-post-by-id pid))]
+                 [:div.post
+                   [:div.post_content (:contents post-map)]
+                   [:div.post_timestamp "posted at " (:timestamp post-map)]])))]]))]))
+
+
+
 
 (defn draw-posts-for-thread
   "Returns HTML rendering of all the posts in a given thread"
@@ -265,7 +269,7 @@
 
   (GET "/:term/:tid" [term tid]
               (concat (:component/search cm)
-                      (html [:div#topterm (str "now browsing /" term "/" tid)])
+                      (html [:div#topterm "now browsing /" [:a {:href (str "/" term)} term] (str "/" tid)])
                       (:component/header cm)
                       (:component/menu cm)
                       (println (type tid))

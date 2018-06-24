@@ -37,6 +37,10 @@
 
 }
 
+.thread < a {
+  color: #000;
+}
+
 .post {
   font-size: 24px;
   position: relative;
