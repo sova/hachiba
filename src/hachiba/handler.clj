@@ -231,7 +231,7 @@
                                      (hidden-field {:value crown} "capval")
                                      (hidden-field {:value term} "boardname")
                                      (hidden-field {:value tid} "thread-id")
-                                     (text-area {:placeholder (str "post to " term)} "post_content")
+                                     (text-area {:placeholder (str "post to " term "/" tid)} "post_content")
                                      (text-field {:placeholder crown} "captcha")
                                      (submit-button {:class "btn"
                                                      :id "post_submit"
@@ -250,20 +250,20 @@
   "Returns HTML rendering of threads coll"
   [term]
 
-  (println "^ " (get-threads-by-page term))
+  ;(println "^ " (get-threads-by-page term))
 
   (html
     [:div.threads
     (let [threads (get-threads-by-page term)]
        (for [thread threads]
          (do
-         (println "^^ " thread)
+         ;(println "^^ " thread)
          [:div.thread {:thread-id thread}
           [:a {:href (str "/" term "/" thread)}
            (let [post-ids (get-posts-by-thread thread)]
              (for [pid post-ids]
                (do
-               (println "^^^ " pid)
+               ;(println "^^^ " pid)
                (let [post-map (first (get-post-by-id pid))]
                  [:div.post
                    [:div.post_content (:content post-map)]
@@ -277,14 +277,14 @@
   [tid]
   (html
     [:div.thread {:id tid}
-     (println "get posts by thread tid" (get-posts-by-thread tid))
+     ;(println "get posts by thread tid" (get-posts-by-thread tid))
          (let [post-ids (get-posts-by-thread tid)]
            (for [pid post-ids]
              (let [post-map (first (get-post-by-id pid))]
                (do
-                 (println "^x^ " pid)
-                 (println "^xx^ " (get-post-by-id pid))
-                 (println "^xxx^ " (first (get-post-by-id pid)))
+                 ;(println "^x^ " pid)
+                 ;(println "^xx^ " (get-post-by-id pid))
+                 ;(println "^xxx^ " (first (get-post-by-id pid)))
 
                [:div.post
                  [:div.post_content (:content post-map)]
@@ -343,9 +343,9 @@
                       (html [:div#topterm "now browsing /" [:a {:href (str "/" term)} term] (str "/" tid)])
                       (:component/header cm)
                       (:component/menu cm)
-                      (println "gpbt" (get-posts-by-thread tid))
+                      ;(println "gpbt" (get-posts-by-thread tid))
                       (draw-posts-for-thread tid)
-                      (println "tid" tid)
+                      ;(println "tid" tid)
                       (comment-input-with-tid term tid)
                       ;(html-footer folds)
                       ))
@@ -365,9 +365,12 @@
 
       (if (= capval captcha)
         (do
-          (println "/" boardname)
-          (println thread-id)
-          (println content)
+          ;write latest boardname to change-tracking-atom
+
+
+          ;(println "/" boardname)
+          ;(println thread-id)
+          ;(println content)
          ; (println thread-id " : is the thread-id")
           (new-post boardname thread-id content)
           {:status 302
