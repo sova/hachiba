@@ -211,14 +211,8 @@
           :component/body (html (let [coll (take 100 (distinct @last-modified))]
                             [:body
                              [:div#main_contain
-                              [:div {:class "latest"} "Latest Activity"]
-                              [:ul (for [x coll] [:li [:a {:href (str "/" x)} x]])]]]))
+                              [:div {:class "latest"} "Latest Board Activity"]]]))
 
-          :component/footer (html [:div#footing "top folds"
-                                   [:div#topfolds.main
-                                    [:a.fold {:href "/nature"} "/nature"]
-                                    [:a.fold {:href "/wigwam"} "/wigwam"]
-                                    [:a.fold {:href "/jokes"}  "/jokes"]]])
           })
 
 
@@ -228,7 +222,7 @@
                                      [:post "/post"]
                                      (hidden-field {:value crown} "capval")
                                      (hidden-field {:value term} "boardname")
-                                     (text-area {:placeholder (str "post to " term)} "post_content")
+                                     (text-area {:placeholder (str "post new thread in " term)} "post_content")
                                      (text-field {:placeholder crown} "captcha")
                                      (submit-button {:class "btn"
                                                      :id "post_submit"
@@ -250,7 +244,7 @@
 (defn html-recents
   "Generates a footer element given a collection of folds (board names)"
   [coll]
-  (html [:div#marking "recent posts"
+  (html [:div#marking
          [:div#topfolds.main
          (for [fold coll]
            [:a.fold {:href (str "/" fold)} (str "/" fold)])]]))

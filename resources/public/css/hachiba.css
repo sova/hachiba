@@ -58,6 +58,7 @@
 
 a:visited, a {
   color: hsla(170, 50%, 30%, 1);
+
   text-decoration: none;
 }
 a:hover {
@@ -72,6 +73,7 @@ a:hover {
 }
 
 .sblink {
+  color: #000;
   text-decoration: none;
 }
 
@@ -128,6 +130,7 @@ form { display: inline; }
 
   display: inline-block;
   font-size: 24px;
+  z-index: 17;
 }
 
 #hachiba_title {
@@ -140,7 +143,7 @@ form { display: inline; }
 
 .menulinks {
 
-    background-color: hsla(170, 50%, 50%, .35);
+    background-color: #fff;
 
   padding-left: 5px;
 
@@ -184,19 +187,25 @@ clear:left;}
 }
 
 #topfolds.main {
+  padding-top: 7px;
   float: left;
   clear: left;
   position: relative;
-  background-color: #eee;
-  width: 500px;
-  height: 500px;
-  background-color: hsla(170, 50%, 50%, .35);
+   width: 85%;
+  min-height: 40px;
+  font-size: 24px;
+  border: 1px solid;
+  border-color: hsla(170, 50%, 50%, .35);
   list-style: none;
+  z-index: 2;
+  overflow: none;
 
 }
 
 .fold {
-  display: list-item;
+  display: block;
+  float: left;
+  margin-left: 10px;
 }
 
 
