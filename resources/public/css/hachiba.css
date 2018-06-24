@@ -211,3 +211,8 @@ clear:left;}
 
 
 
+#about {
+  float: left;
+  clear: left;
+  font-size: 24px;
+}

@@ -192,8 +192,8 @@
                                  ;[:div.link [:a {:href "/user" :class "sblink"} "points"]]
                                  [:div.link [:a {:href "/about" :class "sblink"} "about"]]
 
-                                 [:div.link [:a {:href "/fresh" :class "sblink"} "fresh"]]
-                                 [:div.link [:a {:href "/submit" :class "sblink"} "submit"]]
+                                 ;[:div.link [:a {:href "/fresh" :class "sblink"} "fresh"]]
+                                 ;[:div.link [:a {:href "/submit" :class "sblink"} "submit"]]
                                  ;[:div.link [:a {:href "/favorites" :class "sblink"} "favorites"]]
                                  ;[:div.link [:a {:href "/logout" :class "sblink"} "logout"]]
                                  [:div.link [:a {:href "/index" :class "sblink"} "complete index"]]]])
@@ -208,10 +208,15 @@
                                                       :id "boardnav_submit"
                                                       :onSubmit (submit-boardnav)} "go"))]])
 
-          :component/body (html (let [coll (take 100 (distinct @last-modified))]
+          :component/latest (html
                             [:body
                              [:div#main_contain
-                              [:div {:class "latest"} "Latest Board Activity"]]]))
+                              [:div {:class "latest"} "Latest Board Activity"]]])
+
+          :component/complete (html
+                            [:body
+                             [:div#main_contain
+                              [:div {:class "latest"} "Complete Index of Boards"]]])
 
           })
 
@@ -302,7 +307,7 @@
   (GET "/" [] (concat (:component/search cm)
                       (:component/header cm)
                       (:component/menu cm)
-                      (:component/body cm)
+                      (:component/latest cm)
                       (html-recents (take 100 (distinct @last-modified)))))
 
   (POST "/" [params :as params]
@@ -313,12 +318,22 @@
        :body ""}))
 
   (GET "/user" [params :as params] (str "user!" params))
-  (GET "/about" [params :as params] (str "about!" params))
+  (GET "/about" [params :as params]
+       (concat (:component/search cm)
+                      (html [:div#topterm (str "about practicalhuman.org/")])
+                      (:component/header cm)
+                      (html [:div#about "This is a messageboard experiment by Valiant V."])
+                      (:component/menu cm)))
   (GET "/fresh" [params :as params] (str "fresh!" params))
-  (GET "/submit" [params :as params] (str "submit!" params))
   (GET "/favorites" [params :as params] (str "favorites!" params))
   (GET "/logout" [params :as params] (str "logout!" params))
-  (GET "/index" [params :as params] (str "complete index!" params))
+  (GET "/index" [params :as params]
+    (let [pagenames (map :pagename @page-threads)]
+              (concat (:component/search cm)
+                      (:component/header cm)
+                      (:component/menu cm)
+                      (:component/complete cm)
+                      (html-recents pagenames))))
 
   (GET "/:term" [term]
               (concat (:component/search cm)
@@ -384,7 +399,7 @@
              :headers {"Location" (str boardname "/" tid-after-post)}
              :body ""})))))
 
-  (route/not-found "Not Found"))
+  (route/not-found "Likely just an invalid captcha..."))
 
 
 (def app
