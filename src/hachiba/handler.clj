@@ -53,10 +53,20 @@
 
 
 ;fxns
-(defn has-value [key value]
-  "Returns a predicate that tests whether a map contains a specific value"
-  (fn [m]
-    (= value (m key))))
+(defn find-index [term]
+  (reduce-kv (fn [_ idx m]
+     (if (= term (:pagename m))
+            (reduced idx)))
+          nil
+          @page-threads))
+
+;(find-index "top")
+;(find-index "hax")
+
+(defn update-page-threads [pagename new-thread-id]
+  (let [idx (find-index pagename)]
+    (assoc @page-threads idx :threads new-thread-id)))
+
 
 (defn uuid [] (subs (.toString (java.util.UUID/randomUUID)) 0 8))
 
@@ -74,6 +84,7 @@
         posts (:posts (first posts-map))]
 
     posts))
+
 
 
 (defn get-thread-by-post [pid]
