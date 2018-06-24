@@ -5,7 +5,8 @@
             [hiccup.form :refer :all]
             [ring.middleware.defaults :refer [wrap-defaults api-defaults]]
             [ring.middleware.resource :refer [wrap-resource]]
-            [ring.middleware.content-type :refer [wrap-content-type]]))
+            [ring.middleware.content-type :refer [wrap-content-type]]
+            [clj-time.core :as t]))
 
 ;atoms
 (def page (atom {:user "vaso"}))
@@ -16,7 +17,7 @@
                           :threads [10031 10033]}])) ; ordered based on thread stats
 (def page-terms (atom {:pagename "pagename"
                        :terms ["terms"]}))
-(def threads (atom [{:thread_id 10029
+(def threads (atom [{:thread_id "10029"
                      :posts [17778 17780]}
                     {:thread_id 10031
                      :posts [17779]}
@@ -52,6 +53,9 @@
 
 
 ;fxns
+(defn uuid [] (subs (.toString (java.util.UUID/randomUUID)) 0 8))
+
+
 (defn page-for-post
   "Given a post id, return the pagename"
   [post_id]
@@ -190,7 +194,7 @@
     [:div.threads
     (let [threads (get-threads-by-page term)]
        (for [thread threads]
-         [:div.thread
+         [:div.thread {:thread_id thread}
          (let [post-ids (get-posts-by-thread thread)]
            (for [pid post-ids]
              (let [post-map (first (get-post-by-id pid))]
@@ -198,7 +202,18 @@
                  [:div.post_content (:contents post-map)]
                  [:div.post_timestamp "posted at " (:timestamp post-map)]])))]))]))
 
-
+(defn draw-posts-for-thread
+  "Returns HTML rendering of all the posts in a given thread"
+  [tid]
+  (html
+    [:div.thread {:thread_id tid}
+     (println "get posts by thread tid" (get-posts-by-thread tid))
+         (let [post-ids (get-posts-by-thread tid)]
+           (for [pid post-ids]
+             (let [post-map (first (get-post-by-id pid))]
+               [:div.post
+                 [:div.post_content (:contents post-map)]
+                 [:div.post_timestamp "posted at " (:timestamp post-map)]])))]))
 
 
 
@@ -233,6 +248,7 @@
                       (:component/menu cm)
                       (draw-threads-for-page term)
                       (comment-input term)
+                      (uuid)
                       ;(html-footer folds)
                       ))
 
@@ -247,6 +263,20 @@
                       ;(html-footer folds)
                       ))
 
+  (GET "/:term/:tid" [term tid]
+              (concat (:component/search cm)
+                      (html [:div#topterm (str "now browsing /" term "/" tid)])
+                      (:component/header cm)
+                      (:component/menu cm)
+                      (println (type tid))
+                      (println (get-posts-by-thread tid))
+                      (draw-posts-for-thread tid)
+                      (println tid)
+                      (comment-input term)
+                      ;(html-footer folds)
+                      ))
+
+
 
 
   (POST "/post" [params :as params]
@@ -255,7 +285,9 @@
           boardname (get fp "boardname")
           content (get fp "post_content")
           captcha (get fp "captcha")
-          sanitized (clojure.string/replace content #"[^a-zA-Z0-9\s.()]" "")]
+          sanitized (clojure.string/replace content #"[^a-zA-Z0-9\s.()]" "")
+          thread_id (get fp "thread_id")
+          timestamp (t/now)]
 
       (if (= capval captcha)
         (do
