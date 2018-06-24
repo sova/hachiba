@@ -10,7 +10,7 @@
 
 
 .post {
-  background-color: hsla(170, 50%, 50%, .5);
+  background-color: hsla(170, 50%, 90%, 1);
   min-width: 200px;
   width: 500px;
   min-height:40px;
@@ -23,9 +23,32 @@
 }
 
 .threads {
-  background-color: hsla(170, 50%, 50%, .3);
+  /*background-color: hsla(170, 50%, 50%, .3);*/
 }
-.thread {}
+.thread {
+  float:left;
+  clear:left;
+  position: relative;
+  min-height: 50px;
+  width: auto;
+  background-color: #efefef;
+  border: 1px solid green;
+  margin-top: 4px;
+
+}
+
+.post {
+  font-size: 24px;
+  position: relative;
+}
+
+.post_timestamp {
+  position: absolute;
+  right: 0;
+  bottom: 1px;
+  font-size: 10px;
+}
+
 
 
 a:visited, a {
@@ -135,6 +158,7 @@ form { display: inline; }
   min-height: 30px;
   width: 550px;
   font-size: 18px;
+  margin-top: 4px;
 }
 
 #captcha {

@@ -13,31 +13,39 @@
 (def page-threads (atom [{:pagename "hax"
                           :threads [10029]}
                          {:pagename "top"
-                          :threads [10031]}])) ; ordered based on thread stats
+                          :threads [10031 10033]}])) ; ordered based on thread stats
 (def page-terms (atom {:pagename "pagename"
                        :terms ["terms"]}))
 (def threads (atom [{:thread_id 10029
                      :posts [17778 17780]}
                     {:thread_id 10031
-                     :posts [17779]}]))
+                     :posts [17779]}
+                    {:thread_id 10033
+                     :posts [18881 18882 18883]}]))
 
 (def posts (atom [{:post_id 17778
-                   :contents "content"
+                   :contents "I'll start this thread!"
                    :timestamp 1018
-                   :num_posts 1
-                   :last-touched 1018
                    :thread_id 10029}
                   {:post_id 17779
-                   :contents "content"
+                   :contents "Well, this is a neat experiment..."
                    :timestamp 1018
-                   :num_posts 1
-                   :last-touched 1018
                    :thread_id 10029}
                   {:post_id 17780
-                   :contents "content"
+                   :contents "Let's try it out!"
                    :timestamp 1018
-                   :num_posts 1
-                   :last-touched 1018
+                   :thread_id 10029}
+                  {:post_id 18881
+                   :contents "Magic!"
+                   :timestamp 1022
+                   :thread_id 10029}
+                  {:post_id 18882
+                   :contents "You best believe it."
+                   :timestamp 1028
+                   :thread_id 10029}
+                  {:post_id 18883
+                   :contents "Harpoons and Cartoons!"
+                   :timestamp 1033
                    :thread_id 10029}]))
 
 (def latest-threads (atom {:fresh-threads ["thread_id"]}))
@@ -130,9 +138,9 @@
           :component/search (html [:div#searchbar.main
                                     [:span [:a {:href "/" :id "sblink"} "practicalhuman.org/"]
                                      (form-to
-                                       [:post "/boardnav"]
+                                       [:post "/"] ;used to be boardnav but f that
 
-                                       (text-field {:placeholder "enter a boardname or create one" :maxlength 37 :id "searchbox"} "::")
+                                       (text-field {:placeholder "enter a boardname or create one" :maxlength 37 :id "searchbox" :autofocus true} "::")
                                        (submit-button {:class "btn"
                                                       :id "boardnav_submit"
                                                       :onSubmit (submit-boardnav)} "go"))]])
@@ -203,11 +211,9 @@
                       (:component/body cm)
                       (html-footer folds)))
 
-  (POST "/boardnav" [params :as params]
+  (POST "/" [params :as params]
     (let [desired-url (:form-params params)
           sanitized (clojure.string/replace desired-url #"[^a-zA-Z0-9\s]" "")]
-
-      ;(println sanitized)
       {:status 302
        :headers {"Location" sanitized}
        :body ""}))
