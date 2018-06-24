@@ -67,10 +67,37 @@
   (let [idx (find-index pagename)
         page-thread-map (get @page-threads idx)]
     (assoc @page-threads idx {:pagename pagename
-                              :threads (conj (:threads page-thread-map) new-thread-id)})))
+                              :threads (vec (distinct (conj (:threads page-thread-map) new-thread-id)))})))
 
 
+
+ (defn find-index-tid [tid]
+  (reduce-kv (fn [_ idx m]
+     (if (= tid (:thread_id m))
+            (reduced idx)))
+          nil
+          @threads))
+
+(defn update-threads [tid pid]
+  (let [idx (find-index-tid tid)]
+    (if (= nil idx)
+      (conj @threads {:thread_id tid
+                      :posts [pid]})
+      ;else
+      (let [thread-map (get @threads idx)]
+        (assoc @threads idx {:thread_id tid
+                             :posts (vec (distinct (conj (:posts thread-map) pid)))})))))
+
+
+
+
+
+
+;(def vints (atom 1))
 (defn uuid [] (subs (.toString (java.util.UUID/randomUUID)) 0 8))
+;(defn uuid []
+;  (swap! vints inc)
+;  @vints)
 
 
 (defn page-for-post
@@ -112,8 +139,7 @@
 (println "# " (get-threads-by-page "top"))
 
 
-(defn add-to-index [post thread_id]
-  )
+(defn add-to-index [post thread_id])
 
 (defn new-post [boardname thread-id content]
   (if (nil? thread-id)
@@ -125,20 +151,30 @@
                          :content content
                          :timestamp (quot (System/currentTimeMillis) 1000)})
 
-      ;add to threads
+      ;update threads
+      (reset! threads (update-threads thread-id post-id))
+
+
+      ;update page-threads
       (reset! page-threads (update-page-threads boardname thread-id))
 
-      ;add to pages
-      ;(swap! page-threads update-in [:pagename boardname] assoc :thread-id thread-id)
 
       (println @posts)
-      (println @page-threads)
+      (println @threads)
+      (println @page-threads))
+    ;else, not nil thread-id
+    (let [post-id (uuid)]
+      (do
         ;add to posts
-        ;add to threads
-      )
-    ;else
-    ;add to posts
-    ))
+        (swap! posts conj {:thread-id thread-id
+                           :post-id post-id
+                           :content content
+                           :timestamp (quot (System/currentTimeMillis) 1000)})
+        ;update threads
+        (reset! threads (update-threads thread-id post-id))
+
+        ;update page-threads
+        (reset! page-threads (update-page-threads boardname thread-id))))))
 
   ;generate a post id
   ;move into atom for @posts
@@ -212,6 +248,19 @@
                                      [:post "/post"]
                                      (hidden-field {:value crown} "capval")
                                      (hidden-field {:value term} "boardname")
+                                     (text-area {:placeholder (str "post to " term)} "post_content")
+                                     (text-field {:placeholder crown} "captcha")
+                                     (submit-button {:class "btn"
+                                                     :id "post_submit"
+                                                     :onSubmit (submit-post crown)} "Post")))))
+
+(defn comment-input-with-tid [term tid]
+  (let [crown (int (Math/floor (* 1000 (rand))))]
+                             (html (form-to
+                                     [:post "/post"]
+                                     (hidden-field {:value crown} "capval")
+                                     (hidden-field {:value term} "boardname")
+                                     (hidden-field {:value tid} "thread_id")
                                      (text-area {:placeholder (str "post to " term)} "post_content")
                                      (text-field {:placeholder crown} "captcha")
                                      (submit-button {:class "btn"
@@ -313,11 +362,10 @@
                       (html [:div#topterm "now browsing /" [:a {:href (str "/" term)} term] (str "/" tid)])
                       (:component/header cm)
                       (:component/menu cm)
-                      (println (type tid))
-                      (println (get-posts-by-thread tid))
+                      (println "gpbt" (get-posts-by-thread tid))
                       (draw-posts-for-thread tid)
-                      (println tid)
-                      (comment-input term)
+                      (println "tid" tid)
+                      (comment-input-with-tid term tid)
                       ;(html-footer folds)
                       ))
 
@@ -337,6 +385,7 @@
       (if (= capval captcha)
         (do
           (println "/" boardname)
+          (println thread-id)
           (println content)
          ; (println thread-id " : is the thread-id")
           (new-post boardname thread-id content)
