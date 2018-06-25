@@ -324,6 +324,9 @@
 
 (def folds ["nature" "pomp" "waves" "wigwam"])
 
+(defn file-upload-progress [request, bytes-read, content-length, item-count]
+  (println "+ " bytes-read))
+
 
 
 (defroutes hachiba-routes
@@ -359,7 +362,7 @@
 
           {:status 200
            :headers {}
-           :body (str mpp)})))
+           :body (str mpp)})) {:progress-fn file-upload-progress})
 
 
   (GET "/user" [params :as params] (str "user!" params))
