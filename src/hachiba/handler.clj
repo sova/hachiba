@@ -257,12 +257,14 @@
 (defn comment-input-with-tid [term tid]
   (let [crown (int (Math/floor (* 1000 (rand))))]
                              (html (form-to
-                                     [:post "/post"]
+                                     {:enctype "multipart/form-data"}
+                                     [:post "/upload-image"]
                                      (hidden-field {:value crown} "capval")
                                      (hidden-field {:value term} "boardname")
                                      (hidden-field {:value tid} "thread-id")
                                      (text-area {:placeholder (str "post to " term "/" tid)} "post_content")
                                      (text-field {:placeholder crown} "captcha")
+                                     [:input {:id "fileuploadfield" :type "file" :placeholder "image" :name "upload-file" }]
                                      (submit-button {:class "btn"
                                                      :id "post_submit"
                                                      :onSubmit (submit-post crown)} "Post")))))
@@ -325,7 +327,7 @@
 (def folds ["nature" "pomp" "waves" "wigwam"])
 
 (defn file-upload-progress [request, bytes-read, content-length, item-count]
-  ;(println "+ " bytes-read)
+  (println "+ " bytes-read)
   )
 
 
@@ -352,22 +354,43 @@
       (println "* file up /post")
       (println "** " params)
 
-      (let [mpp (:multipart-params params)
-            file-map (get mpp "upload-file")
-            temp-file (:tempfile file-map)
-            size (:size file-map)
-            file-name (:filename file-map)
-            file-type (:content-type file-map)
-            new-file-name (str "img" (quot (System/currentTimeMillis) 1000) (rand-int 4) ".jpg")]
+    (let [fp (:params params)
+          capval (get fp "capval")
+          boardname (get fp "boardname")
+          content (get fp "post_content")
+          captcha (get fp "captcha")
+          sanitized content ;(clojure.string/replace content #"[^a-zA-Z0-9\s.()]" "")
+          thread-id nil ;(get fp "thread-id")
+          timestamp (quot (System/currentTimeMillis) 1000)
+
+          mpp (:multipart-params params)
+          file-map (get mpp "upload-file")
+          temp-file (:tempfile file-map)
+          size (:size file-map)
+          file-name (:filename file-map)
+          file-type (:content-type file-map)
+          new-file-name (str "img" (quot (System/currentTimeMillis) 1000) (rand-int 4) ".jpg")]
+
+      ;(if (= capval captcha)
+        (do
+          (println "+ " file-name)
+          (println "++ " params)
+          (println "/" boardname)
+          (println thread-id)
+          (println content)
+
+          (let [tid-after-post (new-post boardname thread-id content)]
+
+
 
         (println "*** " file-name file-type size)
         (if (not (nil? file-name))
           (io/copy (io/file temp-file) (io/file (str "resources/public/uploads/" new-file-name))))
 
         (html [:div#topterm (str "file upload success.")]
-              [:div#img-link [:a {:href (str "/uploads/" new-file-name)} new-file-name]])
-
-        )) {:progress-fn file-upload-progress})
+                     [:div#img-link [:a {:href (str "/uploads/" new-file-name)} new-file-name]]
+                     [:div#post-link [:a {:href (str "/boardname/tid-after-post")}]])))))
+    {:progress-fn file-upload-progress})
 
 
   (GET "/user" [params :as params] (str "user!" params))
