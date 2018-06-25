@@ -44,9 +44,9 @@
 
 ;fxns
 
-
-(defn upload-file [source-path]
- (io/copy (io/file source-path) (io/file (str "/uploads/pics/" (quot (System/currentTimeMillis) 1000) (rand-int 4) ".jpg"))))
+;lives lower
+;(defn upload-file [source-path]
+; (io/copy (io/file source-path) (io/file (str "/uploads/pics/" (quot (System/currentTimeMillis) 1000) (rand-int 4) ".jpg"))))
 
 
 (defn find-index [term]
@@ -142,7 +142,7 @@
 (defn new-post
   "1. Generate new ID for post (and if not set, thread).
    2. Update posts-atom, threads-atom, page-terms-atom"
-  [boardname thread-id content]
+  [boardname thread-id content image-url]
   (if (nil? thread-id)
     (let [thread-id (uuid)
           post-id (uuid)]
@@ -150,6 +150,7 @@
       (swap! posts conj {:thread-id (str thread-id)
                          :post-id (str post-id)
                          :content content
+                         :image-url image-url ;can be nil
                          :timestamp (quot (System/currentTimeMillis) 1000)})
 
       ;update threads
@@ -173,6 +174,7 @@
         (swap! posts conj {:thread-id thread-id
                            :post-id (str post-id)
                            :content content
+                           :image-url image-url
                            :timestamp (quot (System/currentTimeMillis) 1000)})
         ;update threads
         (reset! threads (update-threads thread-id post-id))
@@ -198,8 +200,8 @@
 ;      hachiba
 ;place/field of bees
 
-;       実用人
-;     jitsuyou hito
+;       実用na人
+;     jitsuyou na hito
 ;practical person
 
 (def cm { :component/menu (html [:link {:type "text/css", :href "/css/hachiba.css", :rel "stylesheet"}]
@@ -299,7 +301,9 @@
                (let [post-map (first (get-post-by-id pid))]
                  [:div.post
                    [:div.post_content (:content post-map)]
-                   [:div.post_timestamp "posted at " (:timestamp post-map)]]))))]])))]))
+                   [:div.post_timestamp "posted at " (:timestamp post-map)]
+                  (if (not (= nil (:image-url post-map)))
+                 [:img.thumbnail {:src (:image-url post-map)}])]))))]])))]))
 
 
 
@@ -320,7 +324,10 @@
 
                [:div.post
                  [:div.post_content (:content post-map)]
-                 [:div.post_timestamp "posted at " (:timestamp post-map)]]))))]))
+                 [:div.post_timestamp "posted at " (:timestamp post-map)]
+
+                (if (not (= nil (:image-url post-map)))
+                 [:img {:src (:image-url post-map)}])]))))]))
 
 
 
@@ -360,7 +367,7 @@
           content (get fp "post_content")
           captcha (get fp "captcha")
           sanitized content ;(clojure.string/replace content #"[^a-zA-Z0-9\s.()]" "")
-          thread-id nil ;(get fp "thread-id")
+          thread-id (get fp "thread-id")
           timestamp (quot (System/currentTimeMillis) 1000)
 
           mpp (:multipart-params params)
@@ -369,7 +376,8 @@
           size (:size file-map)
           file-name (:filename file-map)
           file-type (:content-type file-map)
-          new-file-name (str "img" (quot (System/currentTimeMillis) 1000) (rand-int 4) ".jpg")]
+          new-file-name (str "img" (quot (System/currentTimeMillis) 1000) (rand-int 4) ".jpg")
+          image-url (str "/uploads/" new-file-name)]
 
       ;(if (= capval captcha)
         (do
@@ -379,7 +387,7 @@
           (println thread-id)
           (println content)
 
-          (let [tid-after-post (new-post boardname thread-id content)]
+          (let [tid-after-post (new-post boardname thread-id content  (if (not (nil? temp-file)) image-url nil))]
 
 
 
@@ -388,8 +396,8 @@
           (io/copy (io/file temp-file) (io/file (str "resources/public/uploads/" new-file-name))))
 
         (html [:div#topterm (str "File upload success.")]
-                     [:div#img-link [:a {:href (str "/uploads/" new-file-name)} new-file-name]]
-                     [:div#post-link [:a {:href (str "/" boardname "/" tid-after-post)} (str "/" boardname "/" tid-after-post)]])))))
+              [:div#img-link [:a {:href image-url} new-file-name]]
+              [:div#post-link [:a {:href (str "/" boardname "/" tid-after-post)} (str "/" boardname "/" tid-after-post)]])))))
     {:progress-fn file-upload-progress})
 
 
@@ -454,39 +462,6 @@
                       ;(html-footer folds)
                       ))
 
-
-
-
-; (mp/wrap-multipart-params
-   (POST "/post"
-     [params :as params]
-    (let [fp (:form-params params)
-          file-name(get fp upload-file)
-          capval (get fp "capval")
-          boardname (get fp "boardname")
-          content (get fp "post_content")
-          captcha (get fp "captcha")
-          sanitized (clojure.string/replace content #"[^a-zA-Z0-9\s.()]" "")
-          thread-id (get fp "thread-id")
-          timestamp (quot (System/currentTimeMillis) 1000)]
-
-      ;(if (= capval captcha)
-        (do
-          ;write latest boardname to change-tracking-atom
-
-          (println "+ " file-name)
-          (println "++ " params)
-          (println "/" boardname)
-          (println thread-id)
-          (println content)
-          ;(println thread-id " : is the thread-id")
-          (let [tid-after-post (new-post boardname thread-id content)]
-           ;(upload-file file-name)
-           ;(io/copy tempfile (io/file "resources" "public" filename))
-            {:status 200
-             :headers {"Location" (str boardname "/" tid-after-post)}
-             ;:body "File Successfully Uploaded"
-             })))););)
 
   (route/not-found "Likely just an invalid captcha..."))
 

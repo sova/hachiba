@@ -17,7 +17,6 @@
 .post {
   background-color: hsla(170, 50%, 90%, 1);
   min-width: 200px;
-  width: 500px;
   min-height:40px;
   display: block;
   float: left;
@@ -242,4 +241,8 @@ clear:left;}
     float: left;
     clear: left;
   }
+}
+
+.thumbnail {
+   width: 422px;
 }
