@@ -143,6 +143,8 @@
   "1. Generate new ID for post (and if not set, thread).
    2. Update posts-atom, threads-atom, page-terms-atom"
   [boardname thread-id content image-url]
+  (println "@ " thread-id)
+  (println "@@ " image-url)
   (if (nil? thread-id)
     (let [thread-id (uuid)
           post-id (uuid)]
@@ -383,11 +385,13 @@
         (do
           (println "+ " file-name)
           (println "++ " params)
-          (println "/" boardname)
-          (println thread-id)
-          (println content)
+          (println "+++ " boardname)
+          (println "++++ " thread-id)
+          (println "+++++ " content)
+          (println "++++++ " temp-file)
+          (println "+++++++ " file-name)
 
-          (let [tid-after-post (new-post boardname thread-id content  (if (not (nil? temp-file)) image-url nil))]
+          (let [tid-after-post (new-post boardname thread-id content  (if (not (= "" file-name)) image-url nil))]
 
 
 
