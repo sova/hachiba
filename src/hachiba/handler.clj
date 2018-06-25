@@ -387,9 +387,9 @@
         (if (not (nil? file-name))
           (io/copy (io/file temp-file) (io/file (str "resources/public/uploads/" new-file-name))))
 
-        (html [:div#topterm (str "file upload success.")]
+        (html [:div#topterm (str "File upload success.")]
                      [:div#img-link [:a {:href (str "/uploads/" new-file-name)} new-file-name]]
-                     [:div#post-link [:a {:href (str "/boardname/tid-after-post")}]])))))
+                     [:div#post-link [:a {:href (str "/" boardname "/" tid-after-post)} (str "/" boardname "/" tid-after-post)]])))))
     {:progress-fn file-upload-progress})
 
 
