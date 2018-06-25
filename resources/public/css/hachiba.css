@@ -8,6 +8,11 @@
   font-family: 'Source Sans Pro', sans-serif;
 }
 
+#fileuploadfield {
+  float: left;
+  clear: left;
+}
+
 
 .post {
   background-color: hsla(170, 50%, 90%, 1);
@@ -215,4 +220,26 @@ clear:left;}
   float: left;
   clear: left;
   font-size: 24px;
+}
+
+@media screen and (max-width: 600px) {
+  #searchbox {
+    float: left;
+    clear: left;
+  }
+}
+
+
+@media screen and (max-width: 480px) {
+    #menu.main {
+        position: relative;
+        display: block;
+        float: left;
+        clear: left;
+    }
+
+  #searchbox {
+    float: left;
+    clear: left;
+  }
 }

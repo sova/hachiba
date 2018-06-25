@@ -6,6 +6,8 @@
             [ring.middleware.defaults :refer [wrap-defaults api-defaults]]
             [ring.middleware.resource :refer [wrap-resource]]
             [ring.middleware.content-type :refer [wrap-content-type]]
+            [ring.middleware [multipart-params :as mp]]
+            [clojure.java.io :as io :refer [copy file]]
             [clj-time.core :as t]))
 
 ;atoms
@@ -39,7 +41,14 @@
 </script></head>")
 
 
+
 ;fxns
+
+
+(defn upload-file [source-path]
+ (io/copy (io/file source-path) (io/file (str "/uploads/pics/" (quot (System/currentTimeMillis) 1000) (rand-int 4) ".jpg"))))
+
+
 (defn find-index [term]
   (reduce-kv (fn [_ idx m]
      (if (= term (:pagename m))
@@ -176,8 +185,6 @@
 
 
 
-
-
 (defn submit-post [crown]
   ;(println "crown: " crown)
   )
@@ -236,11 +243,13 @@
 (defn comment-input [term]
   (let [crown (int (Math/floor (* 1000 (rand))))]
                              (html (form-to
-                                     [:post "/post"]
+                                     {:enctype "multipart/form-data"}
+                                     [:post "/upload-image"]
                                      (hidden-field {:value crown} "capval")
                                      (hidden-field {:value term} "boardname")
                                      (text-area {:placeholder (str "post new thread in " term)} "post_content")
                                      (text-field {:placeholder crown} "captcha")
+                                     [:input {:id "fileuploadfield" :type "file" :placeholder "image" :name "upload-file" }]
                                      (submit-button {:class "btn"
                                                      :id "post_submit"
                                                      :onSubmit (submit-post crown)} "Post")))))
@@ -315,6 +324,8 @@
 
 (def folds ["nature" "pomp" "waves" "wigwam"])
 
+
+
 (defroutes hachiba-routes
   (GET "/" [] (concat gtag
                       (:component/search cm)
@@ -329,6 +340,27 @@
       {:status 302
        :headers {"Location" sanitized}
        :body ""}))
+
+  (mp/wrap-multipart-params
+    (POST "/upload-image" [params :as params]
+      (println "* file up /post")
+      (println "** " params)
+
+      (let [mpp (:multipart-params params)
+            file-map (get mpp "upload-file")
+            temp-file (:tempfile file-map)
+            size (:size file-map)
+            file-name (:filename file-map)
+            file-type (:content-type file-map)]
+
+        (println "*** " file-name file-type size)
+
+        (io/copy (io/file temp-file) (io/file (str "resources/public/uploads/img" (quot (System/currentTimeMillis) 1000) (rand-int 4) ".jpg")))
+
+          {:status 200
+           :headers {}
+           :body (str mpp)})))
+
 
   (GET "/user" [params :as params] (str "user!" params))
   (GET "/about" [params :as params]
@@ -394,8 +426,11 @@
 
 
 
-  (POST "/post" [params :as params]
+; (mp/wrap-multipart-params
+   (POST "/post"
+     [params :as params]
     (let [fp (:form-params params)
+          file-name(get fp upload-file)
           capval (get fp "capval")
           boardname (get fp "boardname")
           content (get fp "post_content")
@@ -404,19 +439,23 @@
           thread-id (get fp "thread-id")
           timestamp (quot (System/currentTimeMillis) 1000)]
 
-      (if (= capval captcha)
+      ;(if (= capval captcha)
         (do
           ;write latest boardname to change-tracking-atom
 
-
-          ;(println "/" boardname)
-          ;(println thread-id)
-          ;(println content)
-         ; (println thread-id " : is the thread-id")
+          (println "+ " file-name)
+          (println "++ " params)
+          (println "/" boardname)
+          (println thread-id)
+          (println content)
+          ;(println thread-id " : is the thread-id")
           (let [tid-after-post (new-post boardname thread-id content)]
-            {:status 302
+           ;(upload-file file-name)
+           ;(io/copy tempfile (io/file "resources" "public" filename))
+            {:status 200
              :headers {"Location" (str boardname "/" tid-after-post)}
-             :body ""})))))
+             ;:body "File Successfully Uploaded"
+             })))););)
 
   (route/not-found "Likely just an invalid captcha..."))
 
