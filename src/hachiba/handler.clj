@@ -325,7 +325,8 @@
 (def folds ["nature" "pomp" "waves" "wigwam"])
 
 (defn file-upload-progress [request, bytes-read, content-length, item-count]
-  (println "+ " bytes-read))
+  ;(println "+ " bytes-read)
+  )
 
 
 
@@ -336,6 +337,8 @@
                       (:component/menu cm)
                       (:component/latest cm)
                       (html-recents (take 100 (distinct @last-modified)))))
+
+  (route/resources "/uploads/")
 
   (POST "/" [params :as params]
     (let [desired-url (:form-params params)
@@ -354,15 +357,17 @@
             temp-file (:tempfile file-map)
             size (:size file-map)
             file-name (:filename file-map)
-            file-type (:content-type file-map)]
+            file-type (:content-type file-map)
+            new-file-name (str "img" (quot (System/currentTimeMillis) 1000) (rand-int 4) ".jpg")]
 
         (println "*** " file-name file-type size)
+        (if (not (nil? file-name))
+          (io/copy (io/file temp-file) (io/file (str "resources/public/uploads/" new-file-name))))
 
-        (io/copy (io/file temp-file) (io/file (str "resources/public/uploads/img" (quot (System/currentTimeMillis) 1000) (rand-int 4) ".jpg")))
+        (html [:div#topterm (str "file upload success.")]
+              [:div#img-link [:a {:href (str "/uploads/" new-file-name)} new-file-name]])
 
-          {:status 200
-           :headers {}
-           :body (str mpp)})) {:progress-fn file-upload-progress})
+        )) {:progress-fn file-upload-progress})
 
 
   (GET "/user" [params :as params] (str "user!" params))
