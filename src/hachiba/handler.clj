@@ -143,8 +143,8 @@
   "1. Generate new ID for post (and if not set, thread).
    2. Update posts-atom, threads-atom, page-terms-atom"
   [boardname thread-id content image-url]
-  (println "@ " thread-id)
-  (println "@@ " image-url)
+  ;(println "@ " thread-id)
+  ;(println "@@ " image-url)
   (if (nil? thread-id)
     (let [thread-id (uuid)
           post-id (uuid)]
@@ -163,10 +163,10 @@
       (reset! page-threads (update-page-threads boardname thread-id))
 
 
-      (println @posts)
-      (println @threads)
-      (println @page-threads)
-      (println @last-modified)
+      ;(println @posts)
+      ;(println @threads)
+      ;(println @page-threads)
+      ;(println @last-modified)
       (swap! last-modified conj boardname)
       thread-id)
     ;else, not nil thread-id
@@ -336,7 +336,7 @@
 (def folds ["nature" "pomp" "waves" "wigwam"])
 
 (defn file-upload-progress [request, bytes-read, content-length, item-count]
-  (println "+ " bytes-read)
+  ;(println "+ " bytes-read)
   )
 
 
@@ -360,8 +360,8 @@
 
   (mp/wrap-multipart-params
     (POST "/upload-image" [params :as params]
-      (println "* file up /post")
-      (println "** " params)
+      ;(println "* file up /post")
+      ;(println "** " params)
 
     (let [fp (:params params)
           capval (get fp "capval")
@@ -382,33 +382,47 @@
           image-url (str "/uploads/" new-file-name)
           extension (case file-type "image/jpeg" ".jpg" "image/png" ".png" nil)]
 
-      ;(if (= capval captcha)
+      (if (= capval captcha)
         (do
-          (println "+ " file-name)
-          (println "++ " params)
-          (println "+++ " boardname)
-          (println "++++ " thread-id)
-          (println "+++++ " content)
-          (println "++++++ " temp-file)
-          (println "+++++++ " file-name)
-          (println "++++++++" file-type)
+        ;  (println "+ " file-name)
+        ;  (println "++ " params)
+        ;  (println "+++ " boardname)
+        ;  (println "++++ " thread-id)
+        ;  (println "+++++ " content)
+        ;  (println "++++++ " temp-file)
+        ;  (println "+++++++ " file-name)
+        ;  (println "++++++++ " file-type)
+        ;  (println "+++++++++ " extension)
 
-          (let [tid-after-post (new-post boardname thread-id content  (if (not (= "" file-name)) image-url nil))]
+          (let [tid-after-post (new-post boardname thread-id content  (if (not (nil? extension)) image-url nil))]
 
 
 
-        (println "*** " file-name file-type size)
+        ;(println "*** " file-name file-type size)
         (if (not (nil? extension))
           (do
             (io/copy (io/file temp-file) (io/file (str "resources/public/uploads/" new-file-name)))
-            (html [:div#topterm (str "File upload success.")]
-                  [:div#img-link [:a {:href image-url} new-file-name]]
-                  [:div#post-link [:a {:href (str "/" boardname "/" tid-after-post)} (str "/" boardname "/" tid-after-post)]]))
-          ;else
+            (concat gtag
+              (:component/search cm)
+              (:component/header cm)
+              (:component/menu cm)
+              [:div#topterm (str "File upload success.")]
+              [:meta {:http-equiv "refresh" :content (str "3;URL='/" boardname "/" tid-after-post "'")}]
+              [:div#img-link [:a {:href image-url} new-file-name]]
+              [:div#post-link [:a {:href (str "/" boardname "/" tid-after-post)} (str "/" boardname "/" tid-after-post)]])))
+          ;else there no file to upload
           (do
             {:status 302
              :headers {"Location" (str "/" boardname "/" tid-after-post)}
-             :body ""}))))))
+             :body ""})))
+
+        ;else invalid captcha
+        (do
+          (concat gtag
+              (:component/search cm)
+              (:component/header cm)
+              (:component/menu cm)
+              (html [:div#topterm (str "Invalid Captcha.")]))))))
     {:progress-fn file-upload-progress})
 
 
@@ -418,7 +432,11 @@
                       (:component/search cm)
                       (html [:div#topterm (str "about practicalhuman.org/")])
                       (:component/header cm)
-                      (html [:div#about "This is a messageboard experiment by Valiant V."])
+                      (html [:div#about
+                             [:div.heading "Freedom of Speech."]
+                             [:div.disclaim "Please put not safe for work in topics labeled nsfw as a courtesy to others"]
+                             [:div.details "You can upload jpg and png image files."]
+                             [:div.details "Please upload images of 200x200 px or larger."]])
                       (:component/menu cm)))
 
   (GET "/fresh" [params :as params] (str "fresh!" params))
