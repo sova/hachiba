@@ -379,7 +379,8 @@
           file-name (:filename file-map)
           file-type (:content-type file-map)
           new-file-name (str "img" (quot (System/currentTimeMillis) 1000) (rand-int 4) ".jpg")
-          image-url (str "/uploads/" new-file-name)]
+          image-url (str "/uploads/" new-file-name)
+          extension (case file-type "image/jpeg" ".jpg" "image/png" ".png" nil)]
 
       ;(if (= capval captcha)
         (do
@@ -390,18 +391,24 @@
           (println "+++++ " content)
           (println "++++++ " temp-file)
           (println "+++++++ " file-name)
+          (println "++++++++" file-type)
 
           (let [tid-after-post (new-post boardname thread-id content  (if (not (= "" file-name)) image-url nil))]
 
 
 
         (println "*** " file-name file-type size)
-        (if (not (nil? file-name))
-          (io/copy (io/file temp-file) (io/file (str "resources/public/uploads/" new-file-name))))
-
-        (html [:div#topterm (str "File upload success.")]
-              [:div#img-link [:a {:href image-url} new-file-name]]
-              [:div#post-link [:a {:href (str "/" boardname "/" tid-after-post)} (str "/" boardname "/" tid-after-post)]])))))
+        (if (not (nil? extension))
+          (do
+            (io/copy (io/file temp-file) (io/file (str "resources/public/uploads/" new-file-name)))
+            (html [:div#topterm (str "File upload success.")]
+                  [:div#img-link [:a {:href image-url} new-file-name]]
+                  [:div#post-link [:a {:href (str "/" boardname "/" tid-after-post)} (str "/" boardname "/" tid-after-post)]]))
+          ;else
+          (do
+            {:status 302
+             :headers {"Location" (str "/" boardname "/" tid-after-post)}
+             :body ""}))))))
     {:progress-fn file-upload-progress})
 
 
