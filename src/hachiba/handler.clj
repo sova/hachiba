@@ -378,9 +378,9 @@
           size (:size file-map)
           file-name (:filename file-map)
           file-type (:content-type file-map)
-          new-file-name (str "img" (quot (System/currentTimeMillis) 1000) (rand-int 4) ".jpg")
-          image-url (str "/uploads/" new-file-name)
-          extension (case file-type "image/jpeg" ".jpg" "image/png" ".png" nil)]
+          extension (case file-type "image/jpeg" ".jpg" "image/png" ".png" "image/gif" ".gif" nil)
+          new-file-name (str "img" (quot (System/currentTimeMillis) 1000) (rand-int 4) extension)
+          image-url (str "/uploads/" new-file-name)]
 
       (if (= capval captcha)
         (do
