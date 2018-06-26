@@ -435,7 +435,7 @@
                       (html [:div#about
                              [:div.heading "Freedom of Speech."]
                              [:div.disclaim "Please put not safe for work in topics labeled nsfw as a courtesy to others"]
-                             [:div.details "You can upload jpg and png image files."]
+                             [:div.details "You can upload .jpg .png and .gif image files."]
                              [:div.details "Please upload images of 200x200 px or larger."]])
                       (:component/menu cm)))
 
