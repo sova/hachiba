@@ -401,14 +401,14 @@
         ;(println "*** " file-name file-type size)
         (if (not (nil? extension))
           (do
-            (io/copy (io/file temp-file) (io/file (str "resources/public/uploads/" new-file-name)))
+            (io/copy (io/file temp-file) (io/file (str "resources/public/uploads/" new-file-name extension)))
             (concat gtag
               (:component/search cm)
               (:component/header cm)
               (:component/menu cm)
               [:div#topterm (str "File upload success.")]
               [:meta {:http-equiv "refresh" :content (str "3;URL='/" boardname "/" tid-after-post "'")}]
-              [:div#img-link [:a {:href image-url} new-file-name]]
+              [:div#img-link [:a {:href image-url} (str new-file-name extension)]]
               [:div#post-link [:a {:href (str "/" boardname "/" tid-after-post)} (str "/" boardname "/" tid-after-post)]])))
           ;else there no file to upload
           (do
