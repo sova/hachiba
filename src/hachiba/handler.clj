@@ -343,6 +343,7 @@
 
 (defroutes hachiba-routes
   (GET "/" [] (concat gtag
+                      (html [:title "Practical Human - Image and Discussion Board"])
                       (:component/search cm)
                       (:component/header cm)
                       (:component/menu cm)
@@ -403,6 +404,7 @@
           (do
             (io/copy (io/file temp-file) (io/file (str "resources/public/uploads/" new-file-name)))
             (concat gtag
+              (html [:title (str "ph/" boardname)])
               (:component/search cm)
               (:component/header cm)
               (:component/menu cm)
@@ -419,6 +421,7 @@
         ;else invalid captcha
         (do
           (concat gtag
+              (html [:title "Practical Human - Captcha Invalid."])
               (:component/search cm)
               (:component/header cm)
               (:component/menu cm)
@@ -429,6 +432,7 @@
   (GET "/user" [params :as params] (str "user!" params))
   (GET "/about" [params :as params]
        (concat        gtag
+                      (html [:title (str "Practical Human - About")])
                       (:component/search cm)
                       (html [:div#topterm (str "about practicalhuman.org/")])
                       (:component/header cm)
@@ -445,6 +449,7 @@
   (GET "/index" [params :as params]
     (let [pagenames (map :pagename @page-threads)]
               (concat gtag
+                      (html [:title "Practical Human - Image and Discussion Board"])
                       (:component/search cm)
                       (:component/header cm)
                       (:component/menu cm)
@@ -453,6 +458,7 @@
 
   (GET "/:term" [term]
               (concat gtag
+                      (html [:title (str "ph/" term)])
                       (:component/search cm)
                       (html [:div#topterm (str "now browsing /"   term)])
                       (:component/header cm)
@@ -467,6 +473,7 @@
 
   (GET "/:term/" [term]
               (concat gtag
+                      (html [:title (str "ph/" term "/")])
                       (:component/search cm)
                       (html [:div#topterm (str "now browsing /" term "/")])
                       (:component/header cm)
@@ -479,6 +486,7 @@
 
   (GET "/:term/:tid" [term tid]
               (concat gtag
+                      (html [:title (str "ph/" term "/" tid)])
                       (:component/search cm)
                       (html [:div#topterm "now browsing /" [:a {:href (str "/" term)} term] (str "/" tid)])
                       (:component/header cm)
