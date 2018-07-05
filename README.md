@@ -36,7 +36,7 @@ or alternatively, without a browser launch:
     lein ring server-headless
 
 
-One must create the directory resources/public/uploads (e.g. `mkdir /resources/public/uploads/`) so that the file writer can save images there, otherwise you will get null pointer exceptions on uploading images.
+One must create the directory resources/public/uploads (e.g. `mkdir resources/public/uploads/`) so that the file writer can save images there, otherwise you will get null pointer exceptions on uploading images.
 
 (If you know how to make it so that your Clojure project will also automatically create a new directory when being initialized for the first time some place new, please let me know.)
 
