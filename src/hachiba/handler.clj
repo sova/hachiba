@@ -8,7 +8,8 @@
             [ring.middleware.content-type :refer [wrap-content-type]]
             [ring.middleware [multipart-params :as mp]]
             [clojure.java.io :as io :refer [copy file]]
-            [clj-time.core :as t]))
+            [clj-time.core :as t]
+            [duratom.core :refer :all]))
 
 ;atoms
 ;;(def page (atom {:user "vaso"}))
@@ -20,13 +21,25 @@
 ;(def latest-threads (atom {:fresh-threads ["thread-id"]}))
 
 
-(def page-threads (atom []))
-(def threads (atom []))
-(def posts (atom []))
+(def page-threads (duratom :local-file
+                           :file-path "page-threads.sova"
+                           :init []))
+(def threads (duratom :local-file
+                      :file-path "threads.sova"
+                      :init []))
+(def posts (duratom :local-file
+                    :file-path "posts.sova"
+                    :init []))
 
-(def last-modified (atom []))
-(def most-threads (atom []))
-(def most-posts (atom []))
+(def last-modified (duratom :local-file
+                            :file-path "last-modified.sova"
+                            :init []))
+(def most-threads (duratom :local-file
+                           :file-path "most-threads.sova"
+                           :init []))
+(def most-posts (duratom :local-file
+                         :file-path "most-posts.sova"
+                         :init []))
 
 
 

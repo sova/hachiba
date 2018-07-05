@@ -6,6 +6,10 @@ Threads get unique page identities (practicalhuman.org/boardName/a37qR29/ looks 
 And, it's super fast!
 The basic gist is fully functional and as improvements are approved more features shall be incorporated.
 
+## updates
+
+5 July 2018: added use of duratoms (instead of plain ol' atoms) so now all is saved to disk ( in .sova files)
+
 
 ## Prerequisites
 
@@ -50,9 +54,9 @@ In the spirit of simple, fast, and intuitive image and discussion boards of the 
 
 
 
-## Caution
+## Rejoice
 
-Currently (as of 4 July 2018) the server stores all posts, threads, and boards in memory and will lose all state upon program termination and memory release.  Please wait until I add `write-to-disk` and `read-from-disk`, otherwise effort might be in vain.  One can always save the raw data of the generated html pages to use later, but it is much cleaner to save the raw post data, I just have not gotten around to it quite yet.
+As of 5 July 2018 this message board will save all posts, threads, and boards to disk in files ending with .sova
 
 
 ## Why did you make this?
@@ -61,7 +65,11 @@ To prove I am indeed a master ninja.
 
 ## How does that prove you are a master ninja?
 
-This project was created in 8 years and 72 hours.  Eight years because that's how long I've been contemplating message boards and forums deeply and significantly, and seventy-two hours because Hachiba came together in 3 consecutive nights.  In fact, because of how precariously the data is balanced, if I edit any source files on the server the pages will be recompiled and the current state of the server will be lost.  Thus, I'm actually discouraged from updating it at the moment.  How many times can you be glad with not updating your server with conventional tools like Java and javascript?  In Clojureland, and with some ninja mastery, everything is functioning smoothly and compactly, keeping a tiny footprint.  Without all the extra weight, this web server can accommodate many connections, very rapidly, and still look like a complete and compliant web page to Google Crawler's "eyes."
+This project was created in 8 years and 72 hours.  Eight years because that's how long I've been contemplating message boards and forums deeply and significantly, and seventy-two hours because the main Hachiba "engine" came together in 3 consecutive nights.
+
+In Clojureland, and with some ninja mastery, everything is functioning smoothly and compactly, keeping a tiny footprint.
+
+Without all the extra weight, this web server can accommodate many connections, very rapidly, and still look like a complete and compliant web page to Google Crawler's "eyes."
 
 
 ## Not really sure what you said just now
