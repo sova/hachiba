@@ -226,11 +226,13 @@ clear:left;}
   font-size: 24px;
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 800px) {
   #searchbox {
     float: left;
     clear: left;
   }
+
+  .thread { width: auto;}
 }
 
 
@@ -241,6 +243,8 @@ clear:left;}
         float: left;
         clear: left;
     }
+
+  .thread {width: auto;}
 
   #searchbox {
     float: left;
