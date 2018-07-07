@@ -343,7 +343,7 @@
                  [:div.post_timestamp "posted at " (:timestamp post-map)]
 
                 (if (not (= nil (:image-url post-map)))
-                 [:img {:src (:image-url post-map)}])]))))]))
+                 [:img.threadimg {:src (:image-url post-map)}])]))))]))
 
 
 

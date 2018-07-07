@@ -8,6 +8,8 @@
   font-family: 'Source Sans Pro', sans-serif;
 }
 
+.threadimg { width: 100% }
+
 #fileuploadfield {
   float: left;
   clear: left;
@@ -38,7 +40,7 @@
   clear:left;
   position: relative;
   min-height: 50px;
-  width: auto;
+  width: 800px;
   background-color: hsla(170, 50%, 80%, .2);
   border: 1px solid hsla(170, 50%, 20%, .5);
   padding: 2px;
