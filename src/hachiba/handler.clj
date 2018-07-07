@@ -154,7 +154,8 @@
 
 (defn new-post
   "1. Generate new ID for post (and if not set, thread).
-   2. Update posts-atom, threads-atom, page-terms-atom"
+   2. Update posts-atom, threads-atom, page-terms-atom.
+   3. Return thread-id."
   [boardname thread-id content image-url]
   ;(println "@ " thread-id)
   ;(println "@@ " image-url)
@@ -453,7 +454,10 @@
                              [:div.heading "Freedom of Speech."]
                              [:div.disclaim "Please put not safe for work in topics labeled nsfw as a courtesy to others"]
                              [:div.details "You can upload .jpg .png and .gif image files."]
-                             [:div.details "Please upload images of 200x200 px or larger."]])
+                             [:div.details "Please upload images of 200x200 px or larger."]
+                             [:div.details "Contact us by e-mail," [:a {:href "mailto:team@practicalhuman.org"} "team@practicalhuman.org"]]
+                             [:div.source [:p "Source Code available for personal, non-commercial use."][:p [:a {:href "http://github.com/sova/hachiba"} "[ view ph source on github ]"]]]
+                             [:div.footing [:img.footingimg {:src "clojure-logo.png"}] [:span.footingclj "Powered by Clojure"]]])
                       (:component/menu cm)))
 
   (GET "/fresh" [params :as params] (str "fresh!" params))
@@ -513,7 +517,13 @@
                       ))
 
 
-  (route/not-found "Likely just an invalid captcha..."))
+  (route/not-found
+        (concat gtag
+              (html [:title "Practical Human - 404"])
+              (:component/search cm)
+              (:component/header cm)
+              (:component/menu cm)
+              (html [:div#topterm (str "404 Resource Not Found")]))))
 
 
 (def app

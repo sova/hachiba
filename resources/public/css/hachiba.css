@@ -13,6 +13,10 @@
   clear: left;
 }
 
+.source {
+  margin-top: 3em;
+}
+
 
 .post {
   background-color: hsla(170, 50%, 90%, 1);
@@ -195,7 +199,7 @@ clear:left;}
   float: left;
   clear: left;
   position: relative;
-   width: 85%;
+   width: auto;
   min-height: 40px;
   font-size: 24px;
   border: 1px solid;
@@ -208,7 +212,6 @@ clear:left;}
 
 .fold {
   display: block;
-  float: left;
   margin-left: 10px;
 }
 
@@ -245,4 +248,22 @@ clear:left;}
 
 .thumbnail {
    width: 422px;
+}
+
+
+.footing {
+  position: fixed;
+  bottom: 0;
+  left: 0
+}
+
+.footingimg {
+  width: 50px;
+  heigt: 50px;
+  opacity: 0.3;
+}
+
+.footingclj {
+  vertical-align: top;
+  color: #ccc;
 }
