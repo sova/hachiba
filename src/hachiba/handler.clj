@@ -42,7 +42,7 @@
                          :init []))
 
 
-;gtag needs update
+
 (def gtag "<head><!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src='https://www.googletagmanager.com/gtag/js?id=UA-119547458-2'></script>
 <script>
@@ -236,7 +236,7 @@
                                  [:div.link [:a {:href "/index" :class "sblink"} "complete index"]]]])
 
           :component/search (html [:div#searchbar.main
-                                    [:span [:img.headingimg {:src "cf_logo.png"}] [:a {:href "/" :id "sblink"} "clojurefirm.com/"]
+                                    [:span [:a {:href "/" :id "sblink"} "practicalhuman.org/"]
                                      (form-to
                                        [:post "/"] ;used to be boardnav but f that
 
@@ -457,7 +457,7 @@
                              [:div.details "Please upload images of 200x200 px or larger."]
                              [:div.details "Contact us by e-mail," [:a {:href "mailto:team@practicalhuman.org"} "team@practicalhuman.org"]]
                              [:div.source [:p "Source Code available for personal, non-commercial use."][:p [:a {:href "http://github.com/sova/hachiba"} "[ view ph source on github ]"]]]
-                             [:div.footing [:img.footingimg {:src "cf_logo.png"}] [:span.footingclj "Powered by Clojure"]]])
+                             [:div.footing [:img.footingimg {:src "clojure-logo.png"}] [:span.footingclj "Powered by Clojure"]]])
                       (:component/menu cm)))
 
   (GET "/fresh" [params :as params] (str "fresh!" params))
