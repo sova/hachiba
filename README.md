@@ -1,8 +1,8 @@
 # hachiba
 
-Hachiba (live version at http://practicalhuman.org) is an image and discussion board built with usability in mind.
+Hachiba  is an image and discussion board built with usability in mind.
 Boards can be created and immediately posted to, creating a new thread.
-Threads get unique page identities (practicalhuman.org/boardName/a37qR29/ looks like one, for example).
+Threads get unique page identities (~/boardName/a37qR29/ looks like one, for example).
 And, it's super fast!
 The basic gist is fully functional and as improvements are approved more features shall be incorporated.
 
@@ -83,7 +83,7 @@ Thanks for checking this out :D
 
 ## License
 
-Copyright © 2018 Practical Human (http://practicalhuman.org)
-Personal, non-commercial use of this software is permitted indefinitely and modifications to this software when used for personal, non-commercial use, are permitted and encouraged.  For commercially intended use, or use that will accrue revenue by any means not limited to advertising royalties sales and or trade facilitation, please contact the software publisher at `studio@nonforum.com` to discuss options on pricing.
+Copyright © 2018 Vaso Vukotic
+Personal, non-commercial use of this software is permitted indefinitely and modifications to this software when used for personal, non-commercial use, are permitted and encouraged.  For commercially intended use, or use that will accrue revenue by any means not limited to advertising royalties sales and or trade facilitation, please contact the software publisher at `vaso@satisologie.com` to discuss options on pricing.
 Unless otherwise stated, all rights reserved.
 This source code enjoys open access, for educational and personal, non-commercial use.
